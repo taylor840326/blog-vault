@@ -43,12 +43,57 @@ https://www.cnblogs.com/aspirant/p/8532936.html
 
 通过浏览器访问nexus3的管理页面，如果可以看到类似一下截图的仓库，证明存在release和snapshot仓库
 
-![avater]()
+![avater](mvn-deploy/nexus3.png)
 
 
 ## 2.修改pom.xml文件
 
+在个人项目中的pom.xml文件中添加部署仓库的配置。
+
+```xml
+ <distributionManagement>
+        <!-- use the following if you're not using a snapshot version. -->
+        <repository>
+            <id>releases</id>
+            <url>http://172.18.9.250:8081/repository/maven-releases/</url>
+        </repository>
+        <!-- use the following if you ARE using a snapshot version. -->
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://172.18.9.250:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+```
+
 ## 3.尝试推送项目到私有仓库
+
+可以使用mvn deploy命令把编译好的jar文件推送到远程私有仓库
+
+这里以flink-shade-7.0项目为例，我要把他推送到私有的release仓库，则可以使用如下命令。
+
+```bash
+$ mvn clean deploy -Dhadoop.version=2.7.7 -DskipTests -Drat.skip=true -P release
+```
 
 ## 4.尝试把本地下载好的jar文件推送到私有仓库
 
+有的时候可能某些以来无法从maven仓库中下载，需要去制定的地址下载下来后再推送到私有的maven仓库。
+
+比如在编译flink的时候可能会碰到找不到kafka-schema-registry-client-3.3.1.jar包的情况，这时就需要手工下载这个包然后上传到私有仓库供编译flink使用。
+
+方法如下：
+
+下载某个包
+
+```bash
+wget http://packages.confluent.io/maven/io/confluent/kafka-schema-registry-client/3.3.1/kafka-schema-registry-client-3.3.1.jar
+```
+
+
+把下载好的包推送到私有仓库
+
+假设下载后保存的路径为/tmp/kafka-schema-registry-client-3.3.1.jar
+
+```bash
+mvn install:install-file -DgroupId=io.confluent -DartifactId=kafka-schema-registry-client -Dversion=3.3.1 -Dpackaging=jar -Dfile=/tmp/kafka-schema-registry-client-3.3.1.jar
+```
