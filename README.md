@@ -8,7 +8,7 @@
 
 ## 2020
 
-[如何从源代码编译flink](_posts/2020/23/build-flink.md)
+[如何从源代码编译flink](_posts/2020/04/23/build-flink.md)
 
 [如何把私有项目推送到私有仓库](_posts/2020/04/22/mvn-deploy.md)
 
