@@ -94,18 +94,18 @@ https://maven.aliyun.com/mvn/view
 
 通过查看这个页面的最后一列，我们可以找到对应仓库在阿里云的访问地址。例如：
 
-![avater](/2020/04/14/deployment-nexus3-using-docker/aliyun_maven_path.png)
+![avater](deployment-nexus3-using-docker/aliyun_maven_path.png)
 
 
 ### 3.4.2. 把阿里云地址加入到私有仓库中
 
 首先创建一个新的仓库，仓库类型为Proxy，填入地址，其他默认即可
 
-![avater](/2020/04/14/deployment-nexus3-using-docker/create_repository_on_nexus3.png)
+![avater](deployment-nexus3-using-docker/create_repository_on_nexus3.png)
 
-![avater](/2020/04/14/deployment-nexus3-using-docker/select_maven2_proxy_type.png)
+![avater](deployment-nexus3-using-docker/select_maven2_proxy_type.png)
 
-![avater](/2020/04/14/deployment-nexus3-using-docker/create_aliyun_central_proxy_repository.png)
+![avater](deployment-nexus3-using-docker/create_aliyun_central_proxy_repository.png)
 
 最后选择“Create repository”按钮即可创建好一个类型为proxy的代理仓库。当用户访问这个代理仓库的时候如果本地有缓存就直接返回给客户，如果没有就需要再从阿里云拉去数据后再返回。
 
@@ -114,15 +114,15 @@ https://maven.aliyun.com/mvn/view
 
 因为这个仓库是一个group类型的仓库，以后客户端就可以通过访问这个仓库直接访问到后端的多个仓库管理的软件包。
 
-![avater](/2020/04/14/deployment-nexus3-using-docker/modify_maven_public_group_repository.png)
+![avater](deployment-nexus3-using-docker/modify_maven_public_group_repository.png)
 
 把自己创建的阿里云代理仓库以导maven-public仓库中
 
-![avater](/2020/04/14/deployment-nexus3-using-docker/enable_aliyun_proxy_repository.png)
+![avater](deployment-nexus3-using-docker/enable_aliyun_proxy_repository.png)
 
-![avater](/2020/04/14/deployment-nexus3-using-docker/enable_aliyun_proxy_repository2.png)
+![avater](deployment-nexus3-using-docker/enable_aliyun_proxy_repository2.png)
 
-![avater](/2020/04/14/deployment-nexus3-using-docker/save_change.png)
+![avater](deployment-nexus3-using-docker/save_change.png)
 
 
 到此为止，就可以访问我们的镜像仓库了。
