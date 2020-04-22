@@ -43,7 +43,7 @@ https://www.cnblogs.com/aspirant/p/8532936.html
 
 通过浏览器访问nexus3的管理页面，如果可以看到类似一下截图的仓库，证明存在release和snapshot仓库
 
-![avater](mvn-deploy/nexus3.png)
+![](mvn-deploy/nexus3.png)
 
 
 ## 2.修改pom.xml文件
