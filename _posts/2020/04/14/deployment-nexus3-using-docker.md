@@ -94,7 +94,7 @@ https://maven.aliyun.com/mvn/view
 
 通过查看这个页面的最后一列，我们可以找到对应仓库在阿里云的访问地址。例如：
 
-![avater](deployment-nexus3-using-docker/aliyun_maven_path.png)
+![images](deployment-nexus3-using-docker/aliyun_maven_path.png)
 
 
 ### 3.4.2. 把阿里云地址加入到私有仓库中
