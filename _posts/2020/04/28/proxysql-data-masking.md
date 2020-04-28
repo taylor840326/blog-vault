@@ -323,20 +323,45 @@ ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全�
 
 SQL覆写是本文档重点内容。通过覆写和链式查询规则，我们可以实现从简单到复杂的数据脱敏效果。
 
-### 5.1.限制返回行数
+### 5.1.脱敏一列数据
 
-通常我们查询的数据会有很多行，使用数据库的人想返回多少行我们是无法从只读上限制的。
+脱敏一列数据的意思是在一个查询语句中有一个列的数据需要脱敏，这种需求是最容易实现的。
 
-而在MySQL数据库中可以通过LIMIT限制返回行数，我们就可以通过ProxySQL的查询覆写功能把所有合法的查询语句末尾都加上一个LIMIT子句，这样就能满足限制行数的需求
+假设当前数据库有一个t_user表，里面有一个email列需要脱敏。我们脱敏的规则是把email列后面加上一些字符。当然，你也可以使用一些MySQL支持的函数进行脱敏，比如MD5、base64等。
+
+t_user表的表结构如下所示：
+
+```sql
+CREATE TABLE `t_user` (
+  `username` varchar(255) DEFAULT NULL,
+  `mphone` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `user_id` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 
+```
+
+灌入一部分测试数据，我的待测试原始数据为
+
+![](images/raw_data.png)
+
+再处理一个简单查询的时候，email的顺序可能是不固定的。所以，要考虑到email在不同的为止都要能脱敏。
+
+通常我们要考虑的情况有如下四种。
+
+```txt
+select email from t_user;
+select email,username, from t_user;
+select username,email,user_id from t_user;
+select username,email from t_user;
+```
+
+针对这四种情况我们就要插入不同的规则去处理。
 
 ### 5.1.1.插入规则
 
-```sql
-INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(100,1,1,'^SELECT (.*) (.*)',"SELECT \1 \2 LIMIT 10",0,100,100,NULL)
-```
+![](images/email_query_rules.png)
 
-### 5.1.2.是规则生效
-
+### 5.1.2.使规则生效
 
 插入完成后需要使新插入的规则生效，执行如下语句
 
@@ -346,6 +371,143 @@ SAVE MYSQL QUERY RULES TO DISK;
 ```
 
 ### 5.1.3.验证规则
+
+
+```sql
+mysql> select email from t_user limit 3;
++---------------------+
+| email               |
++---------------------+
+| lusong@qq.com@444   |
+| testdemo@qq.com@444 |
+| wangzhe@qq.com@444  |
++---------------------+
+3 rows in set (0.00 sec)
+
+mysql> select email,username from t_user limit 3;
++---------------------+-----------+
+| email               | username  |
++---------------------+-----------+
+| lusong@qq.com@222   | lusong    |
+| testdemo@qq.com@222 | testdemo  |
+| wangzhe@qq.com@222  | Wang, Zhe |
++---------------------+-----------+
+3 rows in set (0.01 sec)
+
+
+mysql> select username,email from t_user limit 3;
++-----------+---------------------+
+| username  | email               |
++-----------+---------------------+
+| lusong    | lusong@qq.com@111   |
+| testdemo  | testdemo@qq.com@111 |
+| Wang, Zhe | wangzhe@qq.com@111  |
++-----------+---------------------+
+3 rows in set (0.00 sec)
+
+mysql> select username,email,user_id from t_user limit 3;
++-----------+---------------------+----------------------------------+
+| username  | email               | user_id                          |
++-----------+---------------------+----------------------------------+
+| lusong    | lusong@qq.com@333   | 8ac0b3398bfbf9d5a097d6aa55b21e87 |
+| testdemo  | testdemo@qq.com@333 | f9337abaf5e3f0398bd231d6800c2346 |
+| Wang, Zhe | wangzhe@qq.com@333  | 7973d3334a088de64e4ecfb329799618 |
++-----------+---------------------+----------------------------------+
+3 rows in set (0.00 sec)
+
+
+```
+
+
+### 5.2.不包含敏感列的处理
+
+通常大部分的查询可能不会包含我们要脱敏的敏感列，针对这类查询我们就要统一做一个处理。
+
+### 5.2.1.插入规则
+
+```sql
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT) VALUES(21,1,1,'^SELECT ((.*),mphone|mphone,(.*)|(.*),mphone,(.*)|mphone|(.*),email|email,(.*)|(.*),email,(.*)|email) (.*)',NULL,0,0)
+```
+
+这个规则因为不是最终规则，它要把处理好的SQL再传入上面设定好的规则rule_id=100的规则中再处理，所以这个规则的apply=0；而这个规则是一个最开始入口规则，所以flagIN=0；flagOUT=100表示它要把处理好的SQL再创给flagIN=100的规则，也就是限制条数的规则。
+
+这里需要注意：flagIN和rule_id没有直接关系，你可以设置成一样的。
+
+### 5.2.2.使规则生效
+
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 5.2.3.验证规则
+
+```sql
+mysql> select username,user_id from t_user limit 10;
++-------------+----------------------------------+
+| username    | user_id                          |
++-------------+----------------------------------+
+| lusong      | 8ac0b3398bfbf9d5a097d6aa55b21e87 |
+| testdemo    | f9337abaf5e3f0398bd231d6800c2346 |
+| Wang, Zhe   | 7973d3334a088de64e4ecfb329799618 |
+| 13874800145 | dcb3be28e27e5df27b5acfee36b0dfeb |
+| chenjd      | 32caf5c22e070e8ee1b59ae9682cdfdf |
+| weidd       | dda795faffdaa453891db425523b3c01 |
+| chenlei     | e4172668190b5e2465987cf900293131 |
+| liujp       | dadc78f075f94cf8f5743506b0e4a743 |
+| sunxz       | 46d23964e854cfa3520d11755f4a37ce |
+| miaoyx      | 1a244de67397182d697414e5d80b1642 |
++-------------+----------------------------------+
+10 rows in set (0.00 sec)
+```
+
+### 5.3.限制返回行数
+
+通常我们查询的数据会有很多行，使用数据库的人想返回多少行我们是无法从只读上限制的。
+
+而在MySQL数据库中可以通过LIMIT限制返回行数，我们就可以通过ProxySQL的查询覆写功能把所有合法的查询语句末尾都加上一个LIMIT子句，这样就能满足限制行数的需求
+
+### 5.3.1.插入规则
+
+```sql
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(100,1,1,'^SELECT (.*) (.*)',"SELECT \1 \2 LIMIT 10",0,0,100,NULL)
+```
+
+通常返回行数限制的规则是最后要生效的规则，因为我们的需求是无论那种查询，最多只能返回10行数据。
+
+所以，可以看到这里的配置中有四个重要的配置。
+
+```txt
+active = 1
+激活这个规则
+apply = 1
+最终应用这个规则
+flagIN = 100
+规则入口
+flagOUT = 100
+规则出口
+```
+
+具体参数的含义，可以参考官方的文档
+
+```html
+https://github.com/sysown/proxysql/wiki/Main-(runtime)#mysql_query_rules
+```
+
+### 5.3.2.是规则生效
+
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 5.3.3.验证规则
 
 ```sql
 mysql> select object_id,object_repr from django_admin_log;
@@ -368,30 +530,12 @@ mysql> select object_id,object_repr from django_admin_log;
 所有查询默认就只能返回10条数据
 
 
-### 5.2.脱敏一列数据
+## 6.链式查询规则
 
-脱敏一列数据的意思是在一个查询语句中有一个列的数据需要脱敏，这种需求是最容易实现的。
-
-假设当前数据库有一个t_user表，里面有一个email列需要脱敏。我们脱敏的规则是把email列@以前的字符算一个MD5值然后返回给客户端
-
-t_user表的表结构如下所示：
-
-```sql
-CREATE TABLE `t_user` (
-  `username` varchar(255) DEFAULT NULL,
-  `mphone` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `user_id` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 
-```
-
-灌入一部分测试数据，我的待测试原始数据为
-
-![](images/raw_data.png)
+章节5说明的是如何
 
 
-
-## 参考资料
+## 7.参考资料
 
 参考链接：
 ```html
