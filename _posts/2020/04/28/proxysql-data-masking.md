@@ -26,14 +26,14 @@
 
 通过多维度的数据安全策略，可以尽量避免 拖库、刷库、撞库等情况的发生。
 
-本文主要讲述如何使用MySQL数据库代理软件ProxySQL的查询复写和查询规则功能实现数据脱敏。
+本文主要讲述如何使用MySQL数据库代理软件ProxySQL的查询覆写和查询规则功能实现数据脱敏。
 
 
-## 2.ProxySQL查询复写和查询规则
+## 2.ProxySQL查询覆写和查询规则
 
 ProxySQL是一款非常强大的数据库代理软件，他对DBA、开发和测试都非常友好。我对这款软件的评价就是：“早用早享受，谁用谁知道：）”
 
-抛开其强大的在线不停机维护功能不谈，最让我喜欢的还有它提供了查询复写和在线配置查询规则的能力。在日常数据库维护的时候查询复写和在线配置查询规则能帮助我们在不修改任何代码的前提下快速优化线上SQL，快速调整后端数据库架构。当然还包括这篇文档中要着重说明的它可以按照我们配置的查询规则和复写规则实现数据脱敏。
+抛开其强大的在线不停机维护功能不谈，最让我喜欢的还有它提供了查询覆写和在线配置查询规则的能力。在日常数据库维护的时候查询覆写和在线配置查询规则能帮助我们在不修改任何代码的前提下快速优化线上SQL，快速调整后端数据库架构。当然还包括这篇文档中要着重说明的它可以按照我们配置的查询规则和覆写规则实现数据脱敏。
 
 ### 2.1.公司线上数据脱敏的要求
 
@@ -42,10 +42,17 @@ ProxySQL是一款非常强大的数据库代理软件，他对DBA、开发和测
 1. 对用户基本信息进行脱敏。用户基本信息包括：用户真实姓名、邮箱、手机号、家庭住址等。
 1. 对用户的消费信息进行脱敏。包括：充值、消费等金额要脱敏
 1. 对公司服务的组织名称要脱敏
+1. 对于只读数据库要严格禁止的操作有
+```txt
+        DML： INSERT、UPDATE、DELETE、SELECT...JOIN...、SELECT *
+        DDL： CREATE、DROP、ALTER、TRUNCATE
+        ADMIN： SHOW、SET
+```
+
 
 ## 3.实现方案
 
-PrxoySQL是一款MySQL数据库代理软件，所有对后端数据库的请求都要通过它才能转发给后端数据库。而ProxySQL又支持进行查询复写和查询规则配置。
+PrxoySQL是一款MySQL数据库代理软件，所有对后端数据库的请求都要通过它才能转发给后端数据库。而ProxySQL又支持进行查询覆写和查询规则配置。
 
 在用户发起查询请求的时候，我们就可以通过ProxySQL提供的机制对SQL语句进行改写，在制定的列上加上不同的函数，进而实现数据脱敏的要求。
 
@@ -88,7 +95,7 @@ Create Table: CREATE TABLE mysql_query_rules (
     match_digest VARCHAR,
     同上。用在匹配digest的时候。一般用不到。
     match_pattern VARCHAR,
-    这个就是进行数据脱敏非常重要的参数之一。这里需要配置一些正则表达式，通过正则表达式就能匹配到某个SQL语句。进而可以对匹配到的SQL语句进行查询复写。
+    这个就是进行数据脱敏非常重要的参数之一。这里需要配置一些正则表达式，通过正则表达式就能匹配到某个SQL语句。进而可以对匹配到的SQL语句进行查询覆写。
     negate_match_pattern INT CHECK (negate_match_pattern IN (0,1)) NOT NULL DEFAULT 0,
     表示这条语句是否进行取反匹配。比如match_pattern匹配到一个SQL，而此时negate_match_pattern的值设为1，则表示匹配这个SQL以外的所有SQL。
     re_modifiers VARCHAR DEFAULT 'CASELESS',
@@ -132,39 +139,187 @@ Create Table: CREATE TABLE mysql_query_rules (
 1 row in set (0.00 sec)
 ```
 
-The fields have the following semantics:
+通过对需求的分析，可以得知需要用到的查询规则配置项为
 
-    rule_id - the unique id of the rule. Rules are processed in rule_id order
-    active - only rules with active=1 will be considered by the query processing module and only active rules are loaded into runtime.
-    username - filtering criteria matching username. If is non-NULL, a query will match only if the connection is made with the correct username
-    schemaname - filtering criteria matching schemaname. If is non-NULL, a query will match only if the connection uses schemaname as default schema (in mariadb/mysql schemaname is equivalent to databasename)
-    flagIN, flagOUT, apply - these allow us to create "chains of rules" that get applied one after the other. An input flag value is set to 0, and only rules with flagIN=0 are considered at the beginning. When a matching rule is found for a specific query, flagOUT is evaluated and if NOT NULL the query will be flagged with the specified flag in flagOUT. If flagOUT differs from flagIN , the query will exit the current chain and enters a new chain of rules having flagIN as the new input flag. If flagOUT matches flagIN, the query will be re-evaluate again against the first rule with said flagIN. This happens until there are no more matching rules, or apply is set to 1 (which means this is the last rule to be applied)
-    client_addr - match traffic from a specific source
-    proxy_addr - match incoming traffic on a specific local IP
-    proxy_port - match incoming traffic on a specific local port
-    digest - match queries with a specific digest, as returned by stats_mysql_query_digest.digest
-    match_digest - regular expression that matches the query digest. See also mysql-query_processor_regex
-    match_pattern - regular expression that matches the query text. See also mysql-query_processor_regex
-    negate_match_pattern - if this is set to 1, only queries not matching the query text will be considered as a match. This acts as a NOT operator in front of the regular expression matching against match_pattern or match_digest
-    re_modifiers - comma separated list of options to modify the behavior of the RE engine. With CASELESS the match is case insensitive. With GLOBAL the replace is global (replaces all matches and not just the first). For backward compatibility, only CASELESS is the enabled by default. See also mysql-query_processor_regex for more details.
-    replace_pattern - this is the pattern with which to replace the matched pattern. It's done using RE2::Replace, so it's worth taking a look at the online documentation for that: https://github.com/google/re2/blob/master/re2/re2.h#L378. Note that this is optional, and when this is missing, the query processor will only cache, route, or set other parameters without rewriting.
-    destination_hostgroup - route matched queries to this hostgroup. This happens unless there is a started transaction and the logged in user has the transaction_persistent flag set to 1 (see mysql_users table).
-    cache_ttl - the number of milliseconds for which to cache the result of the query. Note: in ProxySQL 1.1 cache_ttl was in seconds
-    cache_empty_result - controls if resultset without rows will be cached or not
-    reconnect - feature not used
-    timeout - the maximum timeout in milliseconds with which the matched or rewritten query should be executed. If a query run for longer than the specific threshold, the query is automatically killed. If timeout is not specified, global variable mysql-default_query_timeout applies
-    retries - the maximum number of times a query needs to be re-executed in case of detected failure during the execution of the query. If retries is not specified, global variable mysql-query_retries_on_failure applies
-    delay - number of milliseconds to delay the execution of the query. This is essentially a throttling mechanism and QoS, allowing to give priority to some queries instead of others. This value is added to the mysql-default_query_delay global variable that applies to all queries. Future version of ProxySQL will provide a more advanced throttling mechanism.
-    mirror_flagOUT and mirror_hostgroup - setting related to mirroring .
-    error_msg - query will be blocked, and the specified error_msg will be returned to the client
-    OK_msg - the specified message will be returned for a query that uses the defined rule
-    sticky_conn - not implemented yet
-    multiplex - If 0, multiplex will be disabled. If 1, multiplex could be re-enabled if there are is not any other conditions preventing this (like user variables or transactions). If 2, multiplexing is not disabled for just the current query. See wiki Default is NULL, thus not modifying multiplexing policies
-    gtid_from_hostgroup - defines which hostgroup should be used as the leader for GTID consistent reads (typically the defined WRITER hostgroup in a replication hostgroup pair)
-    log - this column can have three values: 1 - matched query will be recorded into the events log; 0 - matched query will not be recorded into the events log; NULL - matched query log attribute will remain value from the previous match(es). Executed query will be recorded to the events log if its log attribute is set to 1 when rule is applied (apply=1) or after processing all query rules and its log attribute is set to 1
-    apply - when set to 1 no further queries will be evaluated after this rule is matched and processed (note: mysql_query_rules_fast_routing rules will not be evaluated afterwards)
-    comment - free form text field, usable for a descriptive comment of the query rule
+1. rule_id
+1. active
+1. apply
+1. match_pattern
+1. replace_pattern
+1. negate_match_pattern
+1. flagIN
+1. flagOUT
+1. error_msg
 
+
+## 4.实现过程
+
+### 4.1.禁止DDL
+
+我们常用的DDL操作有如CREATE、DROP、ALTER、TRUNCATE，下面就以这几个为例。通过配置ProxySQL的查询规则实现捕获并禁止这些DDL操作。
+
+### 4.1.1.插入规则
+
+首先，需要网mysql_query_rules表中插入新的配置规则
+
+```sql
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(1,1,1,'^TRUNCATE.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(2,1,1,'^CREATE.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(3,1,1,'^DROP.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(4,1,1,'^ALTER.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+```
+
+### 4.1.2.使规则生效
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 4.1.3.验证规则
+
+通过mysql客户端连到代理访问后面的数据库
+
+```bash
+mysql -h 127.0.0.1 -udev -pdev -P6033
+```
+
+
+执行一些命令
+
+```sql
+mysql> create table t1(a1 varchar(255));
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+mysql> truncate table t1;
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+mysql> drop table t1;
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+mysql> alter table t1 add column a2 varchar(255);
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+```
+
+### 4.2.禁止SELECT *操作
+
+通常作为DBA是不推荐代码中包含SELECT *操作的，我们主张用谁就取谁，而实际情况却通常不是如此。
+
+在一个只读数据库上，因为要与真正的人交互，就不能把权限放的太大。所以命令禁止这种操作的发生。而从只读上杜绝很不好控制，那就在数据库这端用技术限制。
+
+### 4.2.1.插入规则
+
+```sql
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(5,1,1,'^SELECT \*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+```
+
+### 4.2.2.使规则生效
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 4.2.3.验证规则
+
+```sql
+mysql> select * from t1;
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+```
+
+### 4.3.禁止部分DML操作
+
+有的操作在只读数据库上是明令禁止的，虽然我们会为只读库的用户分配只读权限。但是为了保险，我们可以在代理层也加上一层限制。防止数据被恶意修改。
+
+### 4.3.1.插入规则
+
+```sql
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(6,1,1,'^DELETE.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(7,1,1,'^UPDATE.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(8,1,1,'^INSERT.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+```
+
+### 4.3.2.使规则生效
+
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 4.3.3.验证规则
+
+```sql
+mysql> insert into t1(a1) values('a');
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+mysql> delete from t1;
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+mysql> update t1 set a1 = 'b' where a1 = 'a';
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+```
+
+### 4.4.禁止联合查询操作
+
+因为我们要面对的操作非常多，而联合查询等复杂一点的查询更不好控制。
+
+为了降低数据泄露的风险，需要禁止联合查询等复杂查询。
+
+### 4.4.1.插入规则
+
+```sql
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(9,1,1,'(.*) JOIN (.*)',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+```
+
+### 4.4.2.使规则生效
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 4.4.3.验证规则
+
+```sql
+mysql> select * from t1 left join t2 on t1.a1 = t2.a1;
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+```
+
+### 4.5.禁止管理命令
+
+有的环境我们禁止使用SHOW开头的命令，防止数据库配置、数据库运行进程被泄露。
+
+### 4.5.1.插入规则
+
+```sql
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(10,1,1,'^SHOW.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+INSERT INTO mysql_query_rules(rule_id,active,apply,match_pattern,replace_pattern,negate_match_pattern,flagIN,flagOUT,error_msg) VALUES(11,1,1,'^SET.*',NULL,0,0,0,'对不起，您的操作被禁止.保护公司数据安全人人有责!!!');
+```
+
+### 4.5.2.使规则生效
+
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 4.5.3.验证规则
+
+```sql
+mysql> set global wait_timeout = 28800;
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+mysql> show processlist;
+ERROR 1148 (42000): 对不起，您的操作被禁止.保护公司数据安全人人有责!!!
+```
+
+## 5.SQL覆写
 
 ## 参考资料
 
