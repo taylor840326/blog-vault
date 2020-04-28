@@ -385,9 +385,9 @@ CREATE TABLE `t_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 
 ```
 
-灌入一部分测试数据，我的测试数据原始
+灌入一部分测试数据，我的待测试原始数据为
 
-![](/raw_data.png)
+![](images/raw_data.png)
 
 
 
