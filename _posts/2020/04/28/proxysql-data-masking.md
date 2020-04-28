@@ -372,6 +372,25 @@ mysql> select object_id,object_repr from django_admin_log;
 
 脱敏一列数据的意思是在一个查询语句中有一个列的数据需要脱敏，这种需求是最容易实现的。
 
+假设当前数据库有一个t_user表，里面有一个email列需要脱敏。我们脱敏的规则是把email列@以前的字符算一个MD5值然后返回给客户端
+
+t_user表的表结构如下所示：
+
+```sql
+CREATE TABLE `t_user` (
+  `username` varchar(255) DEFAULT NULL,
+  `mphone` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `user_id` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 
+```
+
+灌入一部分测试数据，我的测试数据原始
+
+![](/raw_data.png)
+
+
+
 ## 参考资料
 
 参考链接：
