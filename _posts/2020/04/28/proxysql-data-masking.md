@@ -532,8 +532,98 @@ mysql> select object_id,object_repr from django_admin_log;
 
 ## 6.链式查询规则
 
-章节5说明的是如何
+章节5说明的是如何配置一条单独的查询规则实现SQL覆写，而实际情况不可能这么简单。
 
+比如会有如下情况：
+1. 在一个表中存在多个敏感字段
+1. 不仅要对某个列脱敏，还要限制返回行数。
+
+这个时候就要用到ProxySQL的链式查询规则，本文档主要引入几个样例说明链式查询规则如何编写。
+
+
+### 6.1.开启非敏感字段查询并限制返回条数
+
+这种情况主要用章节5中的两个查询规则配合才能实现。
+
+大概的实现思路就是先判断查询的SQL有没有敏感字段，如果没有敏感字段就把查询的SQL转发给限制返回条数的规则。
+
+### 6.1.1.插入规则
+
+![](images/negate_match_limit.png)
+
+### 6.1.2.使规则生效
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 6.1.3.验证规则
+
+```sql
+mysql> select username,user_id from t_user;
++-------------+----------------------------------+
+| username    | user_id                          |
++-------------+----------------------------------+
+| lusong      | 8ac0b3398bfbf9d5a097d6aa55b21e87 |
+| testdemo    | f9337abaf5e3f0398bd231d6800c2346 |
+| Wang, Zhe   | 7973d3334a088de64e4ecfb329799618 |
+| 13874800145 | dcb3be28e27e5df27b5acfee36b0dfeb |
+| chenjd      | 32caf5c22e070e8ee1b59ae9682cdfdf |
+| weidd       | dda795faffdaa453891db425523b3c01 |
+| chenlei     | e4172668190b5e2465987cf900293131 |
+| liujp       | dadc78f075f94cf8f5743506b0e4a743 |
+| sunxz       | 46d23964e854cfa3520d11755f4a37ce |
+| miaoyx      | 1a244de67397182d697414e5d80b1642 |
++-------------+----------------------------------+
+10 rows in set (0.00 sec)
+```
+
+在没有显示使用limit子句的情况下默认返回10行数据
+
+
+
+### 6.2.开启多个敏感字段查询并限制返回条数
+
+有的时候在查询一个表的时候需要查询多个敏感字段，这个时候就要使用链式规则判断多个字段是否符合要求脱敏
+
+### 6.2.1.插入规则
+
+![](images/complex_sql_limit.png)
+
+
+### 6.2.2.使规则生效
+
+插入完成后需要使新插入的规则生效，执行如下语句
+
+```sql
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+```
+
+### 6.2.3.验证规则
+
+```sql
+mysql> select username,email,user_id,mphone from t_user;
++-------------+------------------------+----------------------------------+-----------------+
+| username    | email                  | user_id                          | mphone          |
++-------------+------------------------+----------------------------------+-----------------+
+| lusong      | lusong@qq.com@333      | 8ac0b3398bfbf9d5a097d6aa55b21e87 | NULL            |
+| testdemo    | testdemo@qq.com@333    | f9337abaf5e3f0398bd231d6800c2346 | NULL            |
+| Wang, Zhe   | wangzhe@qq.com@333     | 7973d3334a088de64e4ecfb329799618 | NULL            |
+| 13874800145 | 13874800145@qq.com@333 | dcb3be28e27e5df27b5acfee36b0dfeb | 13874800145@111 |
+| chenjd      | chenjd@qq.com@333      | 32caf5c22e070e8ee1b59ae9682cdfdf | NULL            |
+| weidd       | weidd@qq.com@333       | dda795faffdaa453891db425523b3c01 | NULL            |
+| chenlei     | chenlei@qq.com@333     | e4172668190b5e2465987cf900293131 | NULL            |
+| liujp       | liujp@qq.com@333       | dadc78f075f94cf8f5743506b0e4a743 | NULL            |
+| sunxz       | sunxz@qq.com@333       | 46d23964e854cfa3520d11755f4a37ce | NULL            |
+| miaoyx      | miaoyx@qq.com@333      | 1a244de67397182d697414e5d80b1642 | NULL            |
++-------------+------------------------+----------------------------------+-----------------+
+10 rows in set (0.00 sec)
+
+```
 
 ## 7.参考资料
 
