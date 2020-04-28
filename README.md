@@ -8,6 +8,8 @@
 
 ## 2020
 
+[如何使用ProxySQL进行数据脱敏](_posts/2020/04/28/proxysql-data-masking.md)
+
 [如何从源代码编译flink](_posts/2020/04/23/build-flink.md)
 
 [如何把私有项目推送到私有仓库](_posts/2020/04/22/mvn-deploy.md)
