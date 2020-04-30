@@ -8,6 +8,8 @@
 
 ## 2020
 
+[使用minikube搭建k8s测试环境](_posts/2020/04/30/minikube.md)
+
 [如何使用ProxySQL进行数据脱敏](_posts/2020/04/28/proxysql-data-masking.md)
 
 [如何从源代码编译flink](_posts/2020/04/23/build-flink.md)
