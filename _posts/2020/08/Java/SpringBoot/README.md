@@ -226,11 +226,114 @@ private String content;
 
 ### 8.6.创建枚举类型的字段
 
+```java
+public enum Gender {
+    MALE("男性")，
+    FEMALE("女性");
+    
+    private String value;
+    Gender(String str){
+        value = str;    
+    }
+}
+
+@Entity
+@Table(name = "role")
+public class Role{
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender; 
+    ...
+}
+```
+数据库里面对应存储的是MALE/FEMALE
+
 ### 8.7.增加审计功能
+
+只要继承了AbstractAuditBase的类都会默认加上下面四个字段
+
+```java
+@Data 
+@AllArgsConstructor
+@NoArgsConstructor
+@MappedSuperclas
+@EntityListeners(value = AuditingEntityListener.class)
+public abstract class AbstractAuditBase{
+
+    @CreatedDate
+    @Column(updateable = false)
+    @JsonIgnore
+    private Instant createdAt;
+
+    @LastModifiedDate
+    @JsonIgnore
+    private Instant updatedAt;
+
+    @CreatedBy
+    @Column(updateable=false)
+    @JsonIgnore
+    private String createdBy;
+    
+    @LastModifiedBy
+    @JsonIgnore
+    private String updatedBy;
+}
+```
+
+对应的审计功能对应的配置类可能是下面的
+
+```java
+@Configuration
+@EnableJpaAuditing
+public class AuditSecurityConfiguration{
+    @Bean
+    AuditorAware<String> auditorAware() {
+        return () -> Optional.ofNullable(SecurityContextHolder.getContext())
+                            .map(SecurityContext::getAuthentication)
+                            .filter(Authentication::isAuthenticated)
+                            .map(Authentication::getName);
+    }   
+}
+```
+
+@CreatedDate注解表示改字段为创建时间字段。在这个实体被insert的时候，会设置此字段的值。
+
+@CreatedBy注解表示该字段为创建人，在执行insert操作的时候会创建字段。
+
+@LastModifiedDate注解表示该字段为修改时间字段。
+
+@LastModifiedBy注解表示该字段更新人。
+
+@EnableJpaAuditing注解表是开启JPA的审计功能。
 
 ### 8.8.删除/修改数据
 
+@Modifying注解提示JPA该操作是修改操作，修改操作还要配合@Transactional注解使用
+
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User,Long> {
+    @Modifying
+    @Transactional(rollbackFor = Exception.class)
+    void deleteByUserName(String userName);
+}
+```
+
 ### 8.9.关联关系
+
+@OneToOne注解表示一对一关系
+
+@OneToMany注解表示一对多关系
+
+@ManyToOne注解表示多对一关系
+
+@ManyToMany注解表示多对多关系
 
 ### 9.事务Transactional
 
