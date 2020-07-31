@@ -31,7 +31,75 @@
 
 ### 4.1.@PathVariable和@RequestParam
 
+@PathVariable用于获取路径参数
+
+@RequestParam用于获取参训参数
+
+```java
+@GetMapping("/klasses/{klassId}/teachers")
+public List<Teacher> getKlassRelatedTeacher(@PathVariable("klassId") Long klassId,@RequestParam(value = "type",required = false) String type){
+    ...
+}
+```
+
+如果我们请求的url是/klass/{123456}/teachers?type=web
+
+则服务获取到的数据就是：klassId = 123456,type = web
+
 ### 4.2.@RequestBody
+
+@RequestBody注解用于读取Request请求(GET/POST/PUT/DELETE)的body部分，并且Content-Type为application/json格式的数据。
+
+接受到的数据会自动兵丁到Java 对象上。
+
+系统会使用HttpMessageConverter或者自定义的HttpMessageConverter将请求的body中的json字符串转换为Java对象。
+
+```java
+@PostMapping("/sign-up")
+public ResponseEntity signUp(@RequestBody @Valid UserRegisterRequest userRegisterReuqest){
+    userService.save(userRegisterReuqest);
+    return ResponseEntity.ok().build();
+}
+```
+
+UserRegisterRequest对象定义如下
+
+```java
+@Data 
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserRegisterRequest {
+    
+    @NotBlank
+    private String userName;
+    
+    @NotBlank
+    private String password;
+    
+    @FullName
+    @NotBlank
+    private String fullName;
+}
+```
+
+如果对接口发送一个POST请求，并且body的JSON数据为
+
+```html
+curl -XPOST http://localhost:8080/api/users/sign-up -d 
+
+{
+  "userName": "coder",
+  "fullName": "beijing",
+  "password": "123456"
+}
+```
+
+这样json里面的数据就会被绑定在UserRegisterRequest类上。
+
+需要注意：
+1. 一个请求方法只可以有一个@RequestBody，但是可以有多个@RequestParam或者@PathVariable
+1. 如果你的方法必须要有两个@RequestBody来接受数据的话，大概率是你的数据库设计或者系统设计出问题了。
+
 
 ### 5.读取配置信息
 
