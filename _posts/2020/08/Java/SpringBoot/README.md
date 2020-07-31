@@ -7,25 +7,142 @@
 
 ### 2.1.@Autowird
 
+@Autowird注解自动导入对象到类中，被注入进的类同样要被Spring容器管理。
+
+比如Service类注入到Controller类中。
+
+```java
+@Service
+public class UserService{
+...
+}
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+    @Autowird
+    UserService userService;
+    ...
+
+}
+```
+
 ### 2.2.@Component/@Repository/@Service/@Controller
+
+我们一般使用 @Autowired 注解让 Spring 容器帮我们自动装配 bean。要想把类标识成可用于 @Autowired 注解自动装配的 bean 的类,可以采用以下注解实现：
+
+1. @Component ：通用的注解，可标注任意类为 Spring 组件。如果一个 Bean 不知道属于哪个层，可以使用@Component 注解标注。
+1. @Repository : 对应持久层即 Dao 层，主要用于数据库相关操作。
+1. @Service : 对应服务层，主要涉及一些复杂的逻辑，需要用到 Dao 层。
+1. @Controller : 对应 Spring MVC 控制层，主要用户接受用户请求并调用 Service 层返回数据给前端页面。
 
 ### 2.3.@RestController
 
+@RestController注解是@Controller和@ResponseBody的合集,表示这是个控制器 bean,并且是将函数的返回值直 接填入 HTTP 响应体中,是 REST 风格的控制器。
+
+注：现在都是前后端分离，说实话我已经很久没有用过@Controller。如果你的项目太老了的话，就当我没说。
+
+单独使用 @Controller 不加 @ResponseBody的话一般使用在要返回一个视图的情况，这种情况属于比较传统的 Spring MVC 的应用，对应于前后端不分离的情况。@Controller +@ResponseBody 返回 JSON 或 XML 形式数据
+
 ### 2.4.@Scope
+
+声明 Spring Bean 的作用域，使用方法：
+
+```java
+@Bean 
+@Scope("singleton")
+public Person personSingleton() {
+    return new Person();
+}
+```
+
+四种常见的 Spring Bean 的作用域：
+
+1. singleton : 唯一 bean 实例，Spring 中的 bean 默认都是单例的。
+1. prototype : 每次请求都会创建一个新的 bean 实例。
+1. request : 每一次 HTTP 请求都会产生一个新的 bean，该 bean 仅在当前 HTTP request 内有效。
+1. session : 每一次 HTTP 请求都会产生一个新的 bean，该 bean 仅在当前 HTTP session 内有效。
 
 ### 2.5.@Configuration
 
+一般用来声明配置类，可以使用 @Component注解替代，不过使用Configuration注解声明配置类更加语义化。
+
+```java
+@Configuration
+public class AppConfig{
+    
+    @Bean
+    public TransferService transferService(){
+        return new TransferServiceImpl();
+    }
+}
+```
+
 ### 3.处理常见的HTTP请求类型
+
+5种常见的请求类型有
+
+1. GET ：请求从服务器获取特定资源。举个例子：GET /users（获取所有学生）
+1. POST ：在服务器上创建一个新的资源。举个例子：POST /users（创建学生）
+1. PUT ：更新服务器上的资源（客户端提供更新后的整个资源）。举个例子：PUT /users/12（更新编号为 12 的学生）
+1. DELETE ：从服务器删除特定的资源。举个例子：DELETE /users/12（删除编号为 12 的学生）
+1. PATCH ：更新服务器上的资源（客户端提供更改的属性，可以看做作是部分更新），使用的比较少，这里就不举例子了。
 
 ### 3.1.GET
 
+@GetMapping("users)注解等价于@RequestMapping(value="/users",method = ReuestMehtod.GET)
+
+```java
+@GetMapping("/users")
+public ResponseEntity<List<Users>> getALLUsers(){
+    return userRepostiroy.findAll();
+}
+```
+
 ### 3.1.POST
+
+@PostMapping("users)等价于@RequestMapping(value="/users",method = RequestMethod.POST)
+
+```java
+@PostMapping("/users")
+public ResponseEntity<User> createUser(@Valid @RequestBody UserCreateReuqest userCreateRequest){
+    return userRepository.save(user);
+}
+```
 
 ### 3.1.PUT
 
+@PutMapping("/users/{userId})等价于@RequestMapping(value = "/users/{userId}",method = RequestMethod.PUT)
+
+```java
+@PutMapping("/users/{userId}")
+public ResponseEntity<User> updateUser(@PathVariable(value = "userId") Long userId,@Valid @RequestBody UserUpdateRequest userUpdateRequest){
+    ...
+}
+```
+
 ### 3.1.DELETE
 
+@Deletemapping("/usrs/{userId})等价于@RequestMapping(value = "/users/{userId}",method = RequestMethod.DELETE)
+
+```java
+@DeleteMapping("/users/{userId}")
+public ResponseEntity<User> deleteUser(@PathVariable(value = "userId") Long userId){
+    ....
+}
+```
+
 ### 3.1.PATCH
+
+一般实际项目中，都是PUT方法不够用了采用PATCH请求去更新数据
+
+```java
+@PatchMapping("/profile")
+public ResponseEntity<User> updateStudent(@RequestBody StudentUpdateRquest studentUpdateRequest){
+    studentRepository.updateDetail(studentUpdateRquest);
+    return ResponseEntity.ok().build();
+}
+```
 
 ### 4.前后端传值
 
