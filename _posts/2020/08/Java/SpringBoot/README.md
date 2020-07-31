@@ -35,11 +35,77 @@
 
 ### 5.读取配置信息
 
+通常一些外部服务的配置信息需要存放在application.properties文件中。
+
+SpringBoot为我们提供了多种配置文件的读取方式
+
+假设有一个配置文件内容如下：
+
+```yaml
+wuhan2020: 2020年初武汉爆发了新型冠状病毒，疫情严重，但是，我相信一切都会过去！武汉加油！中国加油！
+
+my-profile:
+  name: Guide哥
+  email: koushuangbwcx@163.com
+
+library:
+  location: 湖北武汉加油中国加油
+  books:
+    - name: 天才基本法
+      description: 二十二岁的林朝夕在父亲确诊阿尔茨海默病这天，得知自己暗恋多年的校园男神裴之即将出国深造的消息——对方考取的学校，恰是父亲当年为她放弃的那所。
+    - name: 时间的秩序
+      description: 为什么我们记得过去，而非未来？时间“流逝”意味着什么？是我们存在于时间之内，还是时间存在于我们之中？卡洛·罗韦利用诗意的文字，邀请我们思考这一亘古难题——时间的本质。
+    - name: 了不起的我
+      description: 如何养成一个新习惯？如何让心智变得更成熟？如何拥有高质量的关系？ 如何走出人生的艰难时刻？
+```
+
 ### 5.1.@Value（常用）
+
+@Value("${property}") 读取比较简单的配置信息
+
+```java
+@Value("${wuhan2020}")
+private String name;
+```
 
 ### 5.2.@ConfigurationProperties(常用)
 
+@ConfigurationProperties注解可以读取配置信息并于Bean绑定
+
+```java
+@Component
+@ConfigurationProperties(prefix="library")
+public class LibraryProperties {
+    @NotEmpty
+    private String location;
+    private List<Book> books;
+    
+    @Setter
+    @Getter
+    @ToString
+    static class Book {
+        String name;
+        String description;
+    }
+    ....
+}
+```
+
+这样就可以像使用普通Spring Bean一样，将其注入到其他类中使用。
+
 ### 5.3.@PropertySource(不常用)
+
+@PropertySource指定读取的properties文件
+
+```java
+@Component
+@PropertySource("classpath:website.properties")
+public class WebSite{
+    @Value("${url}")
+    private String url;
+    ...
+}
+```
 
 ### 6.参数校验
 
