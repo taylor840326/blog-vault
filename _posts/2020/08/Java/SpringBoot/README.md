@@ -55,13 +55,174 @@
 
 ### 8.1.创建表
 
+@Entity注解声明一个类对应一个数据库实体
+
+@Table注解作用在类上，设置表名
+
+```java
+@Entity
+@Table(name = "t_role")
+public class Role {
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String description;
+}
+```
+
 ### 8.2.创建主键
+
+@Id注解用于声明一个字段为主键
+
+使用@Id声明之后，我们还需要定义主键的生成策略。可以使用@GeneratedValue指定主键生成策略。
+
+对于主键生成的方法在JPA中有两种,分别是
+
+1. 通过@GeneratedValue直接使用JPA内置提供的四种主键生成策略
+1. 通过@GenericGenerator声明一个主键策略，然后@GeneratedValue使用这个策略
+
+#### 8.2.1.使用JPA内置的四种策略
+JPA使用枚举定义了4种常用的主键生成策略
+
+```java
+public enum GenerationType {
+    /*
+    使用一个特定的数据表格来保存主键
+    持久化引擎通过关系数据库的一张特定的表格来生成主键
+    */
+    TABLE,
+    /*
+    在某些数据库中不支持主键自增长，他们提供了另外一种叫SEQUENCE的主键生成机制。比如Oracle，PostgreSQL。
+    */
+    SEQUENCE,
+    /*
+    主键自增长
+    */
+    IDENTITY,
+    /*
+    把主键生成策略交给持久化引擎Persistence Engine
+    持久化引擎会根据数据库在以上三种主键生成策略中选择其中一种
+    */
+    AUTO
+}
+```
+
+@GeneratedValue注解默认使用的策略时GenerationType.AUTO。
+
+如果后端数据库使用的时MySQL，则GenerationType.IDENTITY策略比较普通一点。
+
+如果是分布式系统的话需要另外考虑使用分布式ID
+
+#### 8.2.2.使用自定义策略
+
+除了上面使用JPA默认的4中策略以外，还可以使用@GenericGenerator注解声明一种主键策略，然后使用@GeneratedValue注解应用这个策略
+
+```java
+...
+@Id 
+@GenericGenerator(name = "identityIdGenerator",strategy = "identity")
+@GeneratedValue(generator = "identityIdGenerator")
+private Long id;
+...
+```
+
+以上定义主键策略等同于使用默认的主键策略IDENTITY
+
+```java
+...
+@Id 
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+...
+```
+
+JPA额外提供的主键生成策略有如下几种：
+```java
+    //详见DefaultIdentifierGeneratorFactory类
+    public DefaultIdentifierGeneratorFactory() {
+        this.register("uuid2", UUIDGenerator.class);
+        this.register("guid", GUIDGenerator.class);
+        this.register("uuid", UUIDHexGenerator.class);
+        this.register("uuid.hex", UUIDHexGenerator.class);
+        this.register("assigned", Assigned.class);
+        this.register("identity", IdentityGenerator.class);
+        this.register("select", SelectGenerator.class);
+        this.register("sequence", SequenceStyleGenerator.class);
+        this.register("seqhilo", SequenceHiLoGenerator.class);
+        this.register("increment", IncrementGenerator.class);
+        this.register("foreign", ForeignGenerator.class);
+        this.register("sequence-identity", SequenceIdentityGenerator.class);
+        this.register("enhanced-sequence", SequenceStyleGenerator.class);
+        this.register("enhanced-table", TableGenerator.class);
+    }
+```
 
 ### 8.3.设置字段类型
 
+@Column注解用于声明字段
+
+```java
+@Column(name= "user_name",nullable=false,length=32)
+private String userName;
+```
+
+设置字段并且加默认值（比较常用）
+
+```java
+Column(columnDefinition = "tinyint(1) default 1")
+private Boolean enabled;
+```
+
 ### 8.4.指定不持久化特定字段
 
+@Transient注解用于声明不需要与数据库映射的字段，在保存的时候不需要保存进数据库。
+
+```java
+@Entity(name="USER")
+public class User {
+    ...
+    @Transient
+    private String secrect;
+}
+```
+
+除了使用@Transient声明以外，还可以采用下面几种方法
+
+```java
+static String secrect;  //static修饰的变量不会持久化
+final String secrect = "111111";    //final修饰的变量不会持久化
+transient String secrect;   //transient修饰的变量不会持久化
+```
+
 ### 8.5.声明大字段
+
+@Lob注解用于声明某个字段为大字段
+
+
+简化声明
+
+```java
+@Lob
+private String content;
+```
+
+更详细的声明
+
+```java
+@Lob        
+/*
+指定Lob类型数据库的获取策略
+FetchType.EAGER表示非延迟获取
+FetchType.LAZY表示延迟获取
+*/
+@Basic(fetch = FetchType.EAGER)
+/*
+定义字段的类型
+*/
+@Column(name = "content",columnDefinition = "LONGTEXT NOT NULL")
+private String content;
+```
 
 ### 8.6.创建枚举类型的字段
 
@@ -73,15 +234,137 @@
 
 ### 9.事务Transactional
 
+@Transactional注解一般可以作用在类或者方法上
+
+1. 作用于类上：当把@Transactional注解放在类上时，表示该类的所有public方法都配置相同的事务属性信息。
+1. 作用于方法上：当类配置了@Transactional注解，方法也配置了@Transactional注解，方法的事务会覆盖类的事务配置信息.
+
+在要开启事务的方法上使用@Transactional注解即可开启事务
+
+```java
+@Transactional(rollbackFor = Exception.class)
+public void save(){
+    ...
+}
+```
+
+我们知道Exception分为运行时异常RuntimeException和非运行时异常。
+
+在@Transactional注解中如果不配置rollbackFor属性，那么事务只会在遇到RuntimeException的时候才会回滚；加上rollbackFor=Exception.class可以让事务在遇到非运行时异常时也可以回滚。
+
 ### 10.JSON数据处理
 
 ### 10.1.过滤json数据
 
+@JsonIgnoreProperties注解作用再类上用于过滤掉特定字段不返回或者不解析
+
+```java
+//生成json时将userRoles属性过滤
+@JsonIgnoreProperties({userRoles})
+public class User {
+    private String userName;
+    private String fullName;
+    private String password;
+    @JsonIgnore     //JsonIgnore一般用在类的属性上，作用和JsonIgnoreProperties一样
+    private List<UserRole> userRoles = new ArrayList<>();
+}
+```
+
 ### 10.2.格式化json数据
+
+@JsonFormat注解一般用来格式化JSON数据。
+
+```java
+@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",timezone = 'GMT')
+private Date date;
+```
 
 ### 10.3.扁平化对象
 
+@JsonUnWrapped注解用来扁平化json数据
+
+```java
+@Getter
+@Setter
+@ToString
+public class Account {
+    @JsonUnwrapped
+    private Location location;
+    
+    @JsonUnwrapped
+    private PersonInfo personInfo;
+
+    @Getter
+    @Setter
+    @ToString
+    public static class Location{
+        private String provinceName;
+        private String countyName;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class PersonInfo {
+        private String userName;
+        private String fullName;
+    }
+}
+```
+
+未扁平化之前
+
+```json
+{
+  "location": {
+    "provinceName": "湖北",
+    "countyName": "武汉"
+  },
+  "personInfo": {
+    "userName": "coder1234",
+    "fullName": "beijing"
+  } 
+}
+```
+
+使用@JsonUnwrapped扁平化对象之后
+
+```json
+{
+  "provinceName": "湖北"，
+  "countyName": "武汉",
+  "userName": "coder1234",
+  "fullName": "beijing"
+}
+```
+
 ### 11.测试相关
+
+@ActiveProfiles一般作用于测试类上，用于声明生效的Spring配置文件
+
+```java
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@ActiveProfiles("test")
+@Slf4j
+public abstract class TestBeans(){
+    ...
+}
+```
+
+@Test注解声明一个方法为测试方法
+
+@Transactional被声明的测试方法的数据会回滚，避免污染测试数据
+
+@WithMockUser Spring Security提供的用来模拟一个真是用户，并且可以赋予权限
+```java
+@Test
+@Transactional
+@WithMockUser(username = "user01",authorities = "ROLE_TEACHER")
+public void testFunc() throws Exception {
+    ...
+}
+```
+
 
 
 参考资料
