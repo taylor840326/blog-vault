@@ -9,6 +9,12 @@
 
 [Stream&&Lambda](Stream_Lambda/README.md)
 
+### 3. Java 8 泛型
+https://www.jianshu.com/p/49cf974df8c0
+
+### 3. Java 8 反射
+
+
 ### 3. 字符串处理
 
 [字符串处理](String_Processing/README.md)
