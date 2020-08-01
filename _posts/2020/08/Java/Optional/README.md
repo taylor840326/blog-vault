@@ -1,65 +1,60 @@
 ## Optional
 -----
 
-Java 8 Optional的正确姿势
+新版本的Java 8引入了一个新的Optional类。Optional类的Javadoc描述如下：
 
-等风de帆 2017-12-21 22:58:14  5392  收藏 6
-分类专栏： Java基础
-版权
-调用一个方法得到了返回值却不能直接将返回值作为参数去调用别的方法。我们首先要判断这个返回值是否为null，只有在非空的前提下才能将其作为其他方法的参数。这正是一些类似Guava的外部API试图解决的问题。
+### 2. API介绍
 
-新版本的Java，比如Java 8引入了一个新的Optional类。Optional类的Javadoc描述如下：
+### 2.1. of
 
-这是一个可以为null的容器对象。如果值存在则isPresent()方法会返回true，调用get()方法会返回该对象。
-
-Optional返回新的
-
-API介绍
-of
 为非null的值创建一个Optional。
 
 of方法通过工厂方法创建Optional类。需要注意的是，创建对象时传入的参数不能为null。如果传入参数为null，则抛出NullPointerException 。
 
+```java
 //调用工厂方法创建Optional实例
 Optional<String> name = Optional.of("Sanaulla");
 //传入参数为null，抛出NullPointerException.
 Optional<String> someNull = Optional.of(null);
-1
-2
-3
-4
-ofNullable
+```
+
+### 2.2. ofNullable
+
 为指定的值创建一个Optional，如果指定的值为null，则返回一个空的Optional。
 
 ofNullable与of方法相似，唯一的区别是可以接受参数为null的情况。示例如下：
 
+```java
 //下面创建了一个不包含任何值的Optional实例
 //例如，值为'null'
 Optional empty = Optional.ofNullable(null);
-1
-2
-3
-empty
+```
+
+### 2.3. empty
+
 一个空的Optional。
 
+```java
 Optional<String> empty = Optional.empty();
-1
-isPresent
+```
+
+### 2.4. isPresent
+
 如果值存在返回true，否则返回false。
 
+```java
 //isPresent方法用来检查Optional实例中是否包含值
 if (name.isPresent()) {
   //在Optional实例内调用get()返回已存在的值
   System.out.println(name.get());//输出Sanaulla
 }
-1
-2
-3
-4
-5
-get
+```
+
+### 2.5. get
+
 如果Optional有值则将其返回，否则抛出NoSuchElementException。
 
+```java
 //执行下面的代码会输出：No value present 
 try {
   //在空的Optional实例上调用get()，抛出NoSuchElementException
@@ -67,16 +62,13 @@ try {
 } catch (NoSuchElementException ex) {
   System.out.println(ex.getMessage());
 }
-1
-2
-3
-4
-5
-6
-7
-ifPresent
+```
+
+### 2.6. ifPresent
+
 如果Optional实例有值则为其调用consumer，否则不做处理
 
+```java
 //ifPresent方法接受lambda表达式作为参数。
 //lambda表达式对Optional的值调用consumer进行处理。
         optional.ifPresent(s -> {
@@ -84,52 +76,45 @@ ifPresent
             log.debug(s);
         });
         log.debug(optional.get());
-1
-2
-3
-4
-5
-6
-7
+```
+
 通过ifPresent修改的值，再次通过get获取的时候不会改变
 
-orElse
+### 2.7. orElse
+
 如果有值则将其返回，否则返回指定的其它值。
 
 如果Optional实例有值则将其返回，否则返回orElse方法传入的参数。示例如下：
 
+```java
 //如果值不为null，orElse方法返回Optional实例的值。
 //如果为null，返回传入的消息。
 //输出：There is no value present!
 System.out.println(empty.orElse("There is no value present!"));
 //输出：Sanaulla
 System.out.println(name.orElse("There is some value!"));
-1
-2
-3
-4
-5
-6
-orElseGet
+```
+
+### 2.8. orElseGet
+
 orElseGet与orElse方法类似，区别在于得到的默认值。orElse方法将传入的字符串作为默认值，orElseGet方法可以接受Supplier接口的实现用来生成默认值。示例如下：
 
+```java
 //orElseGet与orElse方法类似，区别在于orElse传入的是默认值，
 //orElseGet可以接受一个lambda表达式生成默认值。
 //输出：Default Value
 System.out.println(empty.orElseGet(() -> "Default Value"));
 //输出：Sanaulla
 System.out.println(name.orElseGet(() -> "Default Value"));
-1
-2
-3
-4
-5
-6
-orElseThrow
+```
+
+### 2.9. orElseThrow
+
 如果有值则将其返回，否则抛出supplier接口创建的异常。
 
 在orElseGet方法中，我们传入一个Supplier接口。然而，在orElseThrow中我们可以传入一个lambda表达式或方法，如果值不存在来抛出异常。
 
+```java
 try {
   //orElseThrow与orElse方法类似。与返回默认值不同，
   //orElseThrow会抛出lambda表达式或方法生成的异常 
@@ -139,44 +124,37 @@ try {
   //输出: No value present in the Optional instance
   System.out.println(ex.getMessage());
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-map
+```
+
+### 2.10. map
+
 如果有值，则对其执行调用mapping函数得到返回值。如果返回值不为null，则创建包含mapping返回值的Optional作为map方法返回值，否则返回空Optional。
 
 //map方法执行传入的lambda表达式参数对Optional实例的值进行修改。
 //为lambda表达式的返回值创建新的Optional实例作为map方法的返回值。
 Optional<String> upperName = name.map((value) -> value.toUpperCase());
 System.out.println(upperName.orElse("No value found"));
-1
-2
-3
-4
-flatMap
+```
+  
+### 2.11. flatMap
+
 如果有值，为其执行mapping函数返回Optional类型返回值，否则返回空Optional。flatMap与map（Funtion）方法类似，区别在于flatMap中的mapper返回值必须是Optional。调用结束时，flatMap不会对结果用Optional封装。
 
+```java
 //flatMap与map（Function）非常类似，区别在于传入方法的lambda表达式的返回类型。
 //map方法中的lambda表达式返回值可以是任意类型，在map函数返回之前会包装为Optional。 
 //但flatMap方法中的lambda表达式返回值必须是Optionl实例。 
 upperName = name.flatMap((value) -> Optional.of(value.toUpperCase()));
 System.out.println(upperName.orElse("No value found"));//输出SANAULLA
-1
-2
-3
-4
-5
-　filter
+```
+
+### 2.12. filter
+
 如果有值并且满足断言条件返回包含该值的Optional，否则返回空Optional。
 
 读到这里，可能你已经知道如何为filter方法传入一段代码。是的，这里可以传入一个lambda表达式。对于filter函数我们应该传入实现了Predicate接口的lambda表达式。
 
+```java
 //filter方法检查给定的Option值是否满足某些条件。
 //如果满足则返回同一个Option实例，否则返回空Optional。
 Optional<String> longName = name.filter((value) -> value.length() > 6);
@@ -187,27 +165,22 @@ Optional<String> anotherName = Optional.of("Sana");
 Optional<String> shortName = anotherName.filter((value) -> value.length() > 6);
 //输出：name长度不足6字符
 System.out.println(shortName.orElse("The name is less than 6 characters"));
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-使用 Java8 Optional 的正确姿势
+```
+
+## 3. 使用 Java8 Optional 的正确姿势
 Java 8 增加了一些很有用的 API, 其中一个就是 Optional. 如果对它不稍假探索, 只是轻描淡写的认为它可以优雅的解决 NullPointException 的问题, 于是代码就开始这么写了
-“`java
+
+```java
 Optional user = ……
 if (user.isPresent()) {
 return user.getOrders();
 } else {
 return Collections.emptyList();
 }
+```
 
 那么不得不说我们的思维仍然是在原地踏步, 只是本能的认为它不过是 User 实例的包装, 这与我们之前写成
+
 ```java
 User user = .....
 if (user != null) {
@@ -215,25 +188,8 @@ if (user != null) {
 } else {
     return Collections.emptyList();
 }
+```
 
-
-
-
-<div class="se-preview-section-delimiter"></div>
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
 实质上是没有任何分别. 这就是我们将要讲到的使用好 Java 8 Optional 类型的正确姿势.
 直白的讲, 当我们还在以如下几种方式使用 Optional 时, 就得开始检视自己了
 - 调用 isPresent() 方法时
@@ -265,112 +221,57 @@ Optional.ofNullable(obj): 它以一种智能的, 宽容的方式来构造一个 
 2. 当想为 obj 断言不为 null 时, 即我们想在万一 obj 为 null 立即报告 NullPointException 异常, 立即修改, 而不是隐藏空指针异常时, 我们就应该果断的用 Optional.of(obj) 来构造 Optional 实例, 而不让任何不可预计的 null 值有可乘之机隐身于 Optional 中.
 
 存在即返回, 无则提供默认值
+```java
 return user.orElse(null);  //而不是 return user.isPresent() ? user.get() : null;
 return user.orElse(UNKNOWN_USER); 
+```
 
-
-
-
-<div class="se-preview-section-delimiter"></div>
-1
-2
-3
-4
-5
-6
-7
-8
 存在即返回, 无则由函数来产生
+```java
 return user.orElseGet(() -> fetchAUserFromDatabase()); //而不要 return user.isPresent() ? user: fetchAUserFromDatabase();
+```
 
-
-
-
-
-<div class="se-preview-section-delimiter"></div>
-1
-2
-3
-4
-5
-6
-7
-8
 存在才对它做点什么
+
+```java
 user.ifPresent(System.out::println);
+```
 
 //而不要下边那样
+```java
 if (user.isPresent()) {
   System.out.println(user.get());
 }
+```
 
+map 函数隆重登场
 
-
-
-<div class="se-preview-section-delimiter"></div>
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-　map 函数隆重登场
 当 user.isPresent() 为真, 获得它关联的 orders, 为假则返回一个空集合时, 我们用上面的 orElse, orElseGet 方法都乏力时, 那原本就是 map 函数的责任, 我们可以这样一行
 
+```java
 return user.map(u -> u.getOrders()).orElse(Collections.emptyList())
+```
 
 //上面避免了我们类似 Java 8 之前的做法
+```java
 if(user.isPresent()) {
   return user.get().getOrders();
 } else {
   return Collections.emptyList();
 }
+```
 
-
-
-
-<div class="se-preview-section-delimiter"></div>
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
 map 是可能无限级联的, 比如再深一层, 获得用户名的大写形式
 
+```java
 return user.map(u -> u.getUsername())
            .map(name -> name.toUpperCase())
            .orElse(null);
+```
 
-
-
-
-<div class="se-preview-section-delimiter"></div>
-1
-2
-3
-4
-5
-6
-7
-8
-9
 这要搁在以前, 每一级调用的展开都需要放一个 null 值的判断
 
+```java
 User user = .....
 if(user != null) {
   String name = user.getUsername();
@@ -382,17 +283,8 @@ if(user != null) {
 } else {
   return null;
 }
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
+```
+
 小结
 使用 Optional 时尽量不直接调用 Optional.get() 方法, Optional.isPresent() 更应该被视为一个私有方法, 应依赖于其他像 Optional.orElse(), Optional.orElseGet(), Optional.map() 等这样的方法.
 
