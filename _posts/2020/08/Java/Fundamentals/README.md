@@ -238,3 +238,7 @@ System.out.println( annotation );
 总结
 
 注解逐渐成为 J2EE 开发栈的重要组成部分，在开发任何企业级应用都需要用到。现如今，几乎所有流行的开发库出于不同目的都开始使用注解，比如代码质量分析、单元测试、XML 解析、依赖项注入等。大量使用了注解的开发库有 Hibernate、Spring MVC、Findbugs、JAXB 和 JUnit。 
+
+### 5. Google Guava
+
+https://ifeve.com/google-guava/
