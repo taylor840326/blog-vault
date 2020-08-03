@@ -1,82 +1,146 @@
 ## Gson
 -----
 
+### 使用Gson
 
-Gson用户指南
-概述
-Gson是这样一个Java类库，它可以将Java对象转换为相应的JSON形式，也可以将JSON字符串转换为对应的Java对象。Gson是一个开源库，其地址为：http://code.google.com/p/google-gson。
-Gson可以使用任意Java对象，包括哪些预先存在的、不在你的源代码中的对象（因此，你并不知道对象的属性）。
+使用Gson的首要类是Gson类，你可以仅仅通过new Gson()的方式创建它。
 
-Gson的目标
-提供一种机制，使得将Java对象转换为JSON或相反如使用toString()以及构造器（工厂方法）一样简单。
-允许预先存在的不可变的对象转换为JSON或与之相反。
-允许自定义对象的表现形式
-支持任意复杂的对象
-输出轻量易读的JSON
-Gson的性能和可扩展性
-下面给出一些我们在同时运行很多其他任务的桌面环境（双处理器，8GB内存，64位Ubuntu操作系统）下的测试指标。你可以使用PerformanceTest类重复运行这些测试。
-
-Strings:反序列化超过25MB的字符串没有出现任何问题（查看PerformanceTest类中的disabled_testStringDeserializationPerformance 方法）
-大型集合：
-1.序列化一个包含超过140亿个对象的集合（查看PerformanceTest类中的disabled_testLargeCollectionSerialization 方法）
-2.反序列化一个拥有87000个对象的集合（查看PerformanceTest类中的disabled_testLargeCollectionDeserialization方法）
-Gson 1.4版本将字节数组和集合的反序列化限制从80KB提升到了11MB。
-注：测试的时候删除disabled_前缀。这个前缀是我们用来进行Junit测试时组织运行这些测试的。
-Gson的用户群
-Gson最一开始是谷歌内部使用的，现在已经应用在了许多项目中了。如今，它已经被许多公共项目和公司所使用。详情请见这里这里。
-
-使用Gson
-使用Gson的首要类是Gson类，你可以仅仅通过new Gson()的方式创建它。你也可以通过GsonBuilder类去创建Gson实例，这个类允许你进行一系列配置，例如版本控制等等。
+你也可以通过GsonBuilder类去创建Gson实例，这个类允许你进行一系列配置，例如版本控制等等。
 
 Gson实例不会保存任何进行Json操作时的状态。因此，你可以自由的服用相同的Gson对象进行诸多的Json序列化和反序列化操作。
 
-原始类型的例子
-序列化
-Gson gson = new Gson();
-gson.toJson(1);            ==> prints 1
-gson.toJson("abcd");       ==> prints "abcd"
-gson.toJson(new Long(10)); ==> prints 10
-int[] values = { 1 };
-gson.toJson(values);       ==> prints [1]
-反序列化
-int one = gson.fromJson("1", int.class);
-Integer one = gson.fromJson("1", Integer.class);
-Long one = gson.fromJson("1", Long.class);
-Boolean false = gson.fromJson("false", Boolean.class);
-String str = gson.fromJson("\"abc\"", String.class);
-String anotherStr = gson.fromJson("[\"abc\"]", String.class);
-对象的例子
-class BagOfPrimitives {
-  private int value1 = 1;
-  private String value2 = "abc";
-  private transient int value3 = 3;
-  BagOfPrimitives() {
-    // no-args constructor
-  }
-}
-序列化
-BagOfPrimitives obj = new BagOfPrimitives();
-Gson gson = new Gson();
-String json = gson.toJson(obj);  
-==> json is {"value1":1,"value2":"abc"}
-注意你不能序列化一个具有循环引用从而导致无限递归的对象。
+### 原始类型的例子
 
-反序列化
-BagOfPrimitives obj2 = gson.fromJson(json, BagOfPrimitives.class);   
-==> obj2 is just like obj
-更好的序列化需要对象具备的要点
-最好使用private成员变量
-没有必要使用注解指示一个成员变量是否需要序列化或反序列化。所有当前类中的成员变量（包括继承自所有父类的成员变量）都默认支持序列化和反序列化。
-以下实现得以正确的操作空对象
-1、序列化时，一个空的成员变量将会在输出中被省去。
-2、反序列化时，在JSON字符串中缺失的字段将会在相应的成员变量中变为空。
-如果一个成员变量由synthetic关键字标记，在JSON序列化或者反序列化的过程中将会被忽略。
-如果成员变量对应的是外部类中的内部类，匿名类，本地类则会被忽略，从而不被序列化或反序列化。
-嵌套类（包括内部类）的例子
+```java
+Gson gson = new Gson();
+String intToJson= gson.toJson(1);
+String stringToJson= gson.toJson("abc");
+String longToJson = gson.toJson(new Long(100));
+String flatToJson = gson.toJson(new Float(0.11));
+String booleanToJson = gson.toJson(true);
+int[] values = {1};
+String arrayToJson = gson.toJson(values);
+System.out.println(intToJson);
+System.out.println(stringToJson);
+System.out.println(longToJson);
+System.out.println(arrayToJson);
+System.out.println(booleanToJson);
+System.out.println(flatToJson);
+
+Integer jsonToInteger = gson.fromJson(intToJson, Integer.class);
+String jsonToString = gson.fromJson(stringToJson, String.class);
+Long jsonToLong = gson.fromJson(longToJson, Long.class);
+Integer[] jsonToArray = gson.fromJson(arrayToJson, Integer[].class);
+Boolean jsonToBoolean = gson.fromJson(booleanToJson, Boolean.class);
+Float jsonToFloat = gson.fromJson(flatToJson, Float.class);
+
+System.out.println(jsonToInteger);
+System.out.println(jsonToString);
+System.out.println(jsonToLong);
+Arrays.stream(jsonToArray).forEach(System.out::println);
+System.out.println(jsonToBoolean);
+System.out.println(jsonToFloat);
+```
+
+### 对象的例子
+
+```java
+public class Student {
+    private Long id;
+    private String sname;
+    private String address;
+
+    transient private String sex;   //此列会被忽略掉
+
+    public Student() {
+    }
+
+    public Student(Long id, String sname, String address, String sex) {
+        this.id = id;
+        this.sname = sname;
+        this.address = address;
+        this.sex = sex;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setSname(String sname) {
+        this.sname = sname;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getSname() {
+        return sname;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+}
+```
+
+序列化和反序列化
+
+```java
+Student student = new Student();
+student.setId((long)1);
+student.setSname("tian lei");
+student.setAddress("beijing");
+student.setSex("1");
+
+String studentToJson = gson.toJson(student);
+System.out.println(studentToJson);
+
+Student jsonToStudent = gson.fromJson(studentToJson, Student.class);
+System.out.println(jsonToStudent);
+System.out.println(jsonToStudent.getSname());
+System.out.println(jsonToStudent.getSex());
+
+输出
+{"id":1,"sname":"tian lei","address":"beijing"}
+com.example.demo.entity.Student@3fed2870
+tian lei
+null
+```
+
+### 需要注意的地方
+
+* 最好使用关键字private修饰成员变量
+* 没有必要使用注解标注一个成员变量是否需要序列化或反序列化。
+    * 所有当前类中的成员变量（包括继承自所有父类的成员变量）都默认支持序列化和反序列化。
+* 如果一个变量被声明为transient，则这个变量将不会被序列化和反序列化。
+* 对nulls对象的执行方法:
+    * 序列化时，一个空的成员变量将会在输出中被省去。
+    * 反序列化时，在JSON字符串中缺失的字段将会在相应的成员变量中变为空。
+* 如果一个成员变量由synthetic关键字标注，在JSON序列化或者反序列化的过程中将会被忽略。
+* 如果成员变量对应的是外部类中的内部类，匿名类，本地类则会被忽略，从而不被序列化或反序列化。
+
+### 嵌套类（包括内部类）的例子
+
 Gson可以轻易的序列化静态的嵌套类。
 
-Gson同样可以反序列化静态嵌套类。然而，Gson不能自动的反序列化一个纯内部类，这是因为在创建这样的对象时它的无参构造器需要一个指向包裹对象（外部类）的引用，而这在反序列化的时候是不可能的。你可以将这个内部类指定为静态的或者提供一个自定义的实例构造者以解决这个问题。以下是一个例子：
+Gson同样可以反序列化静态嵌套类。
 
+然而，Gson不能自动的反序列化一个纯内部类，这是因为在创建这样的对象时它的无参构造器需要一个指向包裹对象（外部类）的引用，而这在反序列化的时候是不可能的。你可以将这个内部类指定为静态的或者提供一个自定义的实例构造者以解决这个问题。以下是一个例子：
+
+```java
 public class A { 
   public String a; 
 
@@ -90,9 +154,12 @@ public class A {
   } 
 }
 注：上面的B类默认情况下是不能使用Gson进行序列化的。
+```
 
-Gson不能反序列化{“b”：“abc”}为一个B的实例，因为B类是一个内部类。如果它被定义为static class B，那么Gson就可以对其执行反序列化。另外一个解决办法是为B提供一个自定义的实例构造者。
+Gson不能反序列化{“b”：“abc”}为一个B的实例，因为B类是一个内部类。
+如果它被定义为static class B，那么Gson就可以对其执行反序列化。另外一个解决办法是为B提供一个自定义的实例构造者。
 
+```java
 public class InstanceCreatorForB implements InstanceCreator<A.B> {
   private final A a;
   public InstanceCreatorForB(A a)  {
@@ -102,9 +169,12 @@ public class InstanceCreatorForB implements InstanceCreator<A.B> {
     return a.new B();
   }
 }
+```
 以上的办法是可能的，但不推荐。
 
-数组的例子
+### 7. 数组的例子
+
+```java
 Gson gson = new Gson();
 int[] ints = {1, 2, 3, 4, 5};
 String[] strings = {"abc", "def", "ghi"};
@@ -115,8 +185,11 @@ gson.toJson(strings);  ==> prints ["abc", "def", "ghi"]
 int[] ints2 = gson.fromJson("[1,2,3,4,5]", int[].class); 
 ==> ints2 will be same as ints
 我们同样支持多为数组，以及任意复杂的元素类型。
+```
 
-集合的例子
+### 8. 集合的例子
+
+```java
 Gson gson = new Gson();
 Collection<Integer> ints = Lists.immutableList(1,2,3,4,5);
 序列化
@@ -126,11 +199,13 @@ Type collectionType = new TypeToken<Collection<Integer>>(){}.getType();
 Collection<Integer> ints2 = gson.fromJson(json, collectionType);
 ints2 is same as ints
 相当丑陋：注意我们如何定义集合的类型。
+```
+
 不幸的是，我们没有办法用Java避免这种尴尬。
 
-集合的限制
-可以序列化任意对象的集合但不能反序列化之
-1、这是因为没有途径使得用户可以去提示该对象的类型。
+### 8.1. 集合的限制
+
+可以序列化任意对象的集合但不能反序列化它,这是因为没有途径使得用户可以去提示该对象的类型。
 反序列化过程中，集合必须制定特定的泛型
 所有这些是有意义的，它使得你在遵循好的Java编码实践的过程中很少发生错误。
 
@@ -476,7 +551,15 @@ System.out.println(jsonRepresentation);
 未来改进
 在最后的改进列表中，或者如果你想要建议新的功能，查看项目网站中的Issues模块。
 
-作者：WeberLisper
+
+
+## 参考资料
+
+```html
+https://github.com/google/gson/blob/master/UserGuide.md#TOC-Object-Examples
+
 链接：https://www.jianshu.com/p/1e20b28c39d1
+作者：WeberLisper
 来源：简书
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
