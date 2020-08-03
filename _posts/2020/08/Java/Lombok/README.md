@@ -48,6 +48,19 @@ Lombok本质上就是一个实现了“JSR 269 API”的程序。在使用javac�
 
 默认生成的方法是public的，如果要修改方法修饰符可以设置AccessLevel的值，例如：@Getter(access = AccessLevel.PROTECTED)
 
+应用在类上
+
+```java
+@Setter
+@Getter
+public class User {
+    private String name;
+    private String address;
+}
+```
+
+应用到字段上
+
 ```java
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -77,18 +90,15 @@ public class User {
   private String name;
   private String phone;
 }
-生成toString方法如下：
-
-public String toString(){
-  return "User(phone=" + phone + ")";
-}
 ```
 
 ### 2.3. @EqualsAndHashCode
 
 生成hashCode()和equals()方法。
 
-默认情况下，它将使用所有非静态，非transient字段。但可以通过在可选的exclude参数中来排除更多字段。或者，通过在parameter参数中命名它们来准确指定希望使用哪些字段。
+默认情况下，它将使用所有非静态，非transient字段。
+
+但可以通过在可选的exclude参数中来排除更多字段。或者，通过在parameter参数中命名它们来准确指定希望使用哪些字段。
 
 ```java
 @EqualsAndHashCode(exclude={"id", "shape"})
@@ -541,5 +551,6 @@ public class SchoolDownloadLimit implements Serializable {
 ```html
 https://www.jianshu.com/p/365ea41b3573
 https://blog.csdn.net/wanghuan1990519wha/article/details/103552076
+https://projectlombok.org/
 ```
 
