@@ -24,83 +24,62 @@ SC(SID,CID,score) --SID 学生编号,CID 课程编号,score 分数
 
 1.学生表
 
-create table Student(SID varchar(10),Sname nvarchar(10),Sage datetime,Ssex nvarchar(10));
-
-insert into Student values('01' , '赵雷' , '1990-01-01' , '男');
-
-insert into Student values('02' , '钱电' , '1990-12-21' , '男');
-
-insert into Student values('03' , '孙风' , '1990-05-20' , '男');
-
-insert into Student values('04' , '李云' , '1990-08-06' , '男');
-
-insert into Student values('05' , '周梅' , '1991-12-01' , '女');
-
-insert into Student values('06' , '吴兰' , '1992-03-01' , '女');
-
-insert into Student values('07' , '郑竹' , '1989-07-01' , '女');
-
-insert into Student values('08' , '王菊' , '1990-01-20' , '女');
+|SID|Sname|Sage|Ssex|
+|:---|---|---|---:|
+|01 | 赵雷 | 1990-01-01 | 男|
+|02 | 钱电 | 1990-12-21 | 男|
+|03 | 孙风 | 1990-05-20 | 男|
+|04 | 李云 | 1990-08-06 | 男|
+|05 | 周梅 | 1991-12-01 | 女|
+|06 | 吴兰 | 1992-03-01 | 女|
+|07 | 郑竹 | 1989-07-01 | 女|
+|08 | 王菊 | 1990-01-20 | 女|
 
 2.课程表
 
 create table Course(CID varchar(10),Cname nvarchar(10),TID varchar(10));
 
-insert into Course values('01' , '语文' , '02');
-
-insert into Course values('02' , '数学' , '01');
-
-insert into Course values('03' , '英语' , '03');
+|CID|Cname|TID|
+|:---|---|---:|
+|01 | 语文 | 02|
+|02 | 数学 | 01|
+|03 | 英语 | 03|
 
 3.教师表
 
 create table Teacher(TID varchar(10),Tname nvarchar(10));
 
-insert into Teacher values('01' , '张三');
-
-insert into Teacher values('02' , '李四');
-
-insert into Teacher values('03' , '王五');
+|TID|Tname|
+|:---|---:|
+|01 | 张三|
+|02 | 李四|
+|03 | 王五|
 
 4.成绩表
 
 create table SC(SID varchar(10),CID varchar(10),score decimal(18,1));
 
-insert into SC values('01' , '01' , 80);
+|SID|CID|score|
+|:---|---|---:|
+|01 | 01 | 80|
+|01 | 02 | 90|
+|01 | 03 | 99|
+|02 | 01 | 70|
+|02 | 02 | 60|
+|02 | 03 | 80|
+|03 | 01 | 80|
+|03 | 02 | 80|
+|03 | 03 | 80|
+|04 | 01 | 50|
+|04 | 02 | 30|
+|04 | 03 | 20|
+|05 | 01 | 76|
+|05 | 02 | 87|
+|06 | 01 | 31|
+|06 | 03 | 34|
+|07 | 02 | 89|
+|07 | 03 | 98|
 
-insert into SC values('01' , '02' , 90);
-
-insert into SC values('01' , '03' , 99);
-
-insert into SC values('02' , '01' , 70);
-
-insert into SC values('02' , '02' , 60);
-
-insert into SC values('02' , '03' , 80);
-
-insert into SC values('03' , '01' , 80);
-
-insert into SC values('03' , '02' , 80);
-
-insert into SC values('03' , '03' , 80);
-
-insert into SC values('04' , '01' , 50);
-
-insert into SC values('04' , '02' , 30);
-
-insert into SC values('04' , '03' , 20);
-
-insert into SC values('05' , '01' , 76);
-
-insert into SC values('05' , '02' , 87);
-
-insert into SC values('06' , '01' , 31);
-
-insert into SC values('06' , '03' , 34);
-
-insert into SC values('07' , '02' , 89);
-
-insert into SC values('07' , '03' , 98);
 
 ### 3. 查询操作
 
