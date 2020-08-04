@@ -21,33 +21,33 @@ Java中变量有两种类型。分别是原始类型和引用类型。
 Gson对这两种类型得处理请参考如下代码：
 
 ```java
-        /*序列化原始类型*/
-        String intToJson= gson.toJson(1);
-        String stringToJson= gson.toJson("abc");
-        String longToJson = gson.toJson(new Long(100));
-        String flatToJson = gson.toJson(new Float(0.11));
-        String booleanToJson = gson.toJson(true);
-        System.out.println(intToJson);
-        System.out.println(stringToJson);
-        System.out.println(longToJson);
-        System.out.println(booleanToJson);
-        System.out.println(flatToJson);
+/*序列化原始类型*/
+String intToJson= gson.toJson(1);
+String stringToJson= gson.toJson("abc");
+String longToJson = gson.toJson(new Long(100));
+String flatToJson = gson.toJson(new Float(0.11));
+String booleanToJson = gson.toJson(true);
+System.out.println(intToJson);
+System.out.println(stringToJson);
+System.out.println(longToJson);
+System.out.println(booleanToJson);
+System.out.println(flatToJson);
 
-        /*反序列号原始类型*/
-        Integer jsonToInteger = gson.fromJson(intToJson, Integer.class);
-        String jsonToString = gson.fromJson(stringToJson, String.class);
-        Long jsonToLong = gson.fromJson(longToJson, Long.class);
-        Boolean jsonToBoolean = gson.fromJson(booleanToJson, Boolean.class);
-        Float jsonToFloat = gson.fromJson(flatToJson, Float.class);
-        System.out.println(jsonToInteger);
-        System.out.println(jsonToString);
-        System.out.println(jsonToLong);
-        System.out.println(jsonToBoolean);
-        System.out.println(jsonToFloat);
+/*反序列号原始类型*/
+Integer jsonToInteger = gson.fromJson(intToJson, Integer.class);
+String jsonToString = gson.fromJson(stringToJson, String.class);
+Long jsonToLong = gson.fromJson(longToJson, Long.class);
+Boolean jsonToBoolean = gson.fromJson(booleanToJson, Boolean.class);
+Float jsonToFloat = gson.fromJson(flatToJson, Float.class);
+System.out.println(jsonToInteger);
+System.out.println(jsonToString);
+System.out.println(jsonToLong);
+System.out.println(jsonToBoolean);
+System.out.println(jsonToFloat);
 
-        /*反序列化成想要的类型*/
-        String jsonConvertIntsToString = gson.fromJson(intToJson, String.class);
-        System.out.println(jsonConvertIntsToString);
+/*反序列化成想要的类型*/
+String jsonConvertIntsToString = gson.fromJson(intToJson, String.class);
+System.out.println(jsonConvertIntsToString);
 ```
 
 ### 2. 数组 (Array)
