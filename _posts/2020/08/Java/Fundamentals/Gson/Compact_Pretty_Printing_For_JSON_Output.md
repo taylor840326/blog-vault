@@ -236,7 +236,7 @@ Gson gson = new GsonBuilder()
 .create();
 ```
          
- ### 1.4. 自定义POJO与JSON的字段映射规则
+ ### 4. 自定义POJO与JSON的字段映射规则
  
 GsonBuilder提供了setFieldNamingPolicy和setFieldNamingStrategy两个方法，用来设置字段序列和反序列时字段映射的规则。
           
@@ -278,7 +278,7 @@ public enum FieldNamingPolicy implements FieldNamingStrategy
 
 注意： @SerializedName注解拥有最高优先级，在加有@SerializedName注解的字段上FieldNamingStrategy不生效！
           
-### 4. TypeAdapter 自定义(反)序列化
+### 5. TypeAdapter 自定义(反)序列化
 
 TypeAdapter 是Gson自2.0（源码注释上说的是2.1）开始版本提供的一个抽象类，用于接管某种类型的序列化和反序列化过程，包含两个主要方法 write(JsonWriter,T) 和 read(JsonReader)，其它的方法都是final方法并最终调用这两个抽象方法。
 ```java
@@ -291,7 +291,7 @@ public abstract class TypeAdapter<T> {
 
 注意：TypeAdapter 以及 JsonSerializer 和 JsonDeserializer 都需要与 .registerTypeAdapter 或 .registerTypeHierarchyAdapter 配合使用，下面将不再重复说明。
                
-### 4.1. TypeAdapter 使用示例1
+### 5.1. TypeAdapter 使用示例1
 
 ```java
                User user = new User("包青天", 24, "baiqiantao@sina.com";
@@ -342,7 +342,7 @@ public class UserTypeAdapter extends TypeAdapter<User> {
              
 当我们为 User.class 注册了 TypeAdapter 之后，那些之前介绍的@SerializedName、FieldNamingStrategy、Since、Until、Expos通通都黯然失色，失去了效果，只会调用我们实现的 UserTypeAdapter.write(JsonWriter, User) 方法，我想怎么写就怎么写。
                
-### 4.2. TypeAdapter 使用示例2
+### 5.2. TypeAdapter 使用示例2
 
 再说一个场景，之前已经说过Gson有一定的容错机制，比如将字符串 "24" 转成整数24，但如果有些情况下给你返了个空字符串怎么办？虽然这是服务器端的问题，但这里我们只是做一个示范，不改服务端的逻辑我们怎么容错。
 
@@ -386,7 +386,7 @@ int i2 = gson.fromJson("包青天", int.class); //-2
 System.out.println(i + "  " + i2);//-1  -2
 ```
               
-### 4.3. Json(De)Serializer
+### 5.3. Json(De)Serializer
 
 JsonSerializer 和JsonDeserializer 不用像TypeAdapter一样，必须要实现序列化和反序列化的过程，你可以据需要选择，如只接管序列化的过程就用 JsonSerializer ，只接管反序列化的过程就用 JsonDeserializer ，如上面的需求可以用下面的代码。
 
@@ -423,7 +423,7 @@ Gson gson = new GsonBuilder()
 	.create();
 ```               
              
-### 5. 泛型与继承
+### 6. 泛型与继承
 
 使用 registerTypeAdapter 时不能使用父类来替上面的子类型，这也是为什么要分别注册而不直接使用Number.class的原因。
 
@@ -460,7 +460,7 @@ String result = gson.toJson(list, type);//明确指定type时才会使用注册�
 String result2 = gson.toJson(list);//不指定type时使用系统默认的机制进行序列化和反序列化
 ```
               
-### 5.1. TypeAdapterFactory
+### 6.1. TypeAdapterFactory
 
 TypeAdapterFactory，见名知意，用于创建 TypeAdapter 的工厂类。
 
@@ -478,7 +478,7 @@ Gson gson = new GsonBuilder()
 .create();
 ```
               
-### 5.2. 注解 @JsonAdapter
+### 6.2. 注解 @JsonAdapter
 
 ```java
 @Retention(RetentionPolicy.RUNTIME)
