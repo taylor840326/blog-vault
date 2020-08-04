@@ -76,9 +76,51 @@ writer.beginObject() // throws IOException
 ```
 {"name":"张三","age":24,"email":null}
 
-除了beginObject、endObject还有beginArray和endArray，两者可以相互嵌套，注意配对即可。
+除了beginObject、endObject外，还有beginArray和endArray，两者可以相互嵌套，注意配对即可。
+
+```java
+JsonWriter writer = new JsonWriter(new OutputStreamWriter(System.out));
+
+writer.beginObject() // throws IOException
+.name("name").value("包青天")//
+.name("兴趣").beginArray().value("篮球").value("排球").endArray()//
+.endObject(); // throws IOException
+writer.close(); // throws IOException。{"name":"包青天","兴趣":["篮球","排球"]}
+```
 
 beginArray后不可以调用name方法，同样beginObject后在调用value之前必须要调用name方法。
+setIndent方法可以设置缩进格式：
+```java
+JsonWriter writer = new JsonWriter(new OutputStreamWriter(System.out));
 
+//设置缩进格式，这种格式是Gson默认的、显示效果良好的格式
+writer.setIndent("  ");
+
+writer.beginObject()
+.name("name").value("包青天")
+.name("兴趣")
+.beginArray()
+.value("篮球").value("足球")
+.beginObject().name("数组里的元素不要求是同类型的").value(true).endObject()
+.endArray()
+.endObject();
+writer.close();
+```
+
+输出
+```json
+{
+"name": "包青天",
+"兴趣": [
+  "篮球",
+  "足球",
+  {
+    "数组里的元素不要求是统一类型的": true
+  }
+  ]
+}
+```
+
+### 自定义序列化和反序列化
 
 
