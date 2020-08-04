@@ -257,24 +257,60 @@ Student s2 = new Student("bb", 20,2);
 Student s3 = new Student("cc", 10,3);
 List<Student> list = Arrays.asList(s1, s2, s3);
  
-//装成list
+转成list
 List<Integer> ageList = list.stream().map(Student::getAge).collect(Collectors.toList()); // [10, 20, 10]
  
-//转成set
+转成set
 Set<Integer> ageSet = list.stream().map(Student::getAge).collect(Collectors.toSet()); // [20, 10]
  
-//转成map,注:key不能相同，否则报错
+转成map,注:key不能相同，否则报错
 Map<String, Integer> studentMap = list.stream().collect(Collectors.toMap(Student::getName, Student::getAge)); // {cc=10, bb=20, aa=10}
- 
+
+转成LinkedList
+LinkedList<Student> linkedList = students.stream().collect(Collectors.toCollection(LinkedList::new));
+
+
+转成CopyOnWriteArrayList
+CopyOnWriteArrayList<Student> copyOnWriteArrayList = students.stream().collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+
+收集后转换为不可变List
+ImmutableList<String> collect = students.stream().collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf))
 ```
 
 ```java
-//字符串分隔符连接
+字符串分隔符连接
 String joinName = list.stream().map(Student::getName).collect(Collectors.joining(",", "(", ")")); // (aa,bb,cc)
 ```
+
+ 聚合操作
  
+ 使用collect可以将Stream转换成值。
+ 
+ ```text
+ maxBy和minBy允许用户按照某个特定的顺序生成一个值。
+ averagingDouble:求平均值，Stream的元素类型为double
+ averagingInt:求平均值，Stream的元素类型为int
+ averagingLong:求平均值，Stream的元素类型为long
+ counting:Stream的元素个数
+ maxBy:在指定条件下的，Stream的最大元素
+ minBy:在指定条件下的，Stream的最小元素
+ reducing: reduce操作
+ summarizingDouble:统计Stream的数据(double)状态，其中包括count，min，max，sum和平均。
+ summarizingInt:统计Stream的数据(int)状态，其中包括count，min，max，sum和平均。
+ summarizingLong:统计Stream的数据(long)状态，其中包括count，min，max，sum和平均。
+ summingDouble:求和，Stream的元素类型为double
+ summingInt:求和，Stream的元素类型为int
+ summingLong:求和，Stream的元素类型为long
+```
+
+排序
+
+```java
+
+
+```
+
  ```java
-//聚合操作
 //1.学生总数
 Long count = list.stream().collect(Collectors.counting()); // 3
 //2.最大年龄 (最小的minBy同理)
@@ -290,16 +326,38 @@ System.out.println("count:" + statistics.getCount() + ",max:" + statistics.getMa
 ```
 
 ```java
-//分组
+分组
 Map<Integer, List<Student>> ageMap = list.stream().collect(Collectors.groupingBy(Student::getAge));
-//多重分组,先根据类型分再根据年龄分
+多重分组,先根据类型分再根据年龄分
 Map<Integer, Map<Integer, List<Student>>> typeAgeMap = list.stream().collect(Collectors.groupingBy(Student::getType, Collectors.groupingBy(Student::getAge)));
+根据年龄分组，然后存储姓名
+Map<Integer, List<String>> result = students.stream().collect(Collectors.groupingBy(Student::getAge, Collectors.mapping(Student::getName, Collectors.toList())));
+根据名称分组，然后计算每个分组内年龄总和。summingInt方法也可以
+Map<String, Integer> result = students.stream().collect(Collectors.groupingBy(Student::getName, Collectors.reducing(0, Student::getAge, Integer::sum)));
+
+对集合按照多个属性分组
+将多个字段拼接成一个新字段，然后再使用groupBy分组
+
+Map<String, List<EntryDeliveryDetailywk>> detailmap = details.stream()
+.collect(Collectors.groupingBy(this::fetchGroupKey));
+
+private String fetchGroupKey(EntryDeliveryDetailywk detail){
+        return detail.getSkuId().toString() 
+        + detail.getItemsName() 
+        + detail.getWarehouseId().toString()   
+        + detail.getSupplierId().toString();
+    }
 ```
 
 ```java
 //分区
 //分成两部分，一部分大于10岁，一部分小于等于10岁
 Map<Boolean, List<Student>> partMap = list.stream().collect(Collectors.partitioningBy(v -> v.getAge() > 10));
+
+分区并求每个分区的个数
+Map<Boolean, Long> partitionCounting= students.stream().collect(Collectors.partitioningBy(v -> {
+    return v.getAge() > 10;
+}, Collectors.counting()));
 ```
 
 ```java
