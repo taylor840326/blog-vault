@@ -1,4 +1,4 @@
-## 常见得Gson操作
+## 常见Gson的操作
 -----
 
 ### 1. 原始类型 (Primitives Type)和引用类型
