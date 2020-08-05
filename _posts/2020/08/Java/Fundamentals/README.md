@@ -7,7 +7,7 @@
 
 ### 2. Java Stream 和Lamdba表达式
 
-[Stream&&Lambda](Stream_Lambda/README.md)
+[Stream&&Lambda](Stream_Lambda/Stream_And_Lambda.md)
 
 ### 3. Java 8 泛型
 https://www.jianshu.com/p/49cf974df8c0
