@@ -8,11 +8,11 @@
 
 ### 2. Lombok
 
-[Lombok](Fundamentals/Lombok/README.md)
+[Lombok](Fundamentals/Lombok/Lombok.md)
 
 ### 3. Optional
 
-[Optional](Fundamentals/Optional/README.md)
+[Optional](Fundamentals/Optional/Optional.md)
 
 ### 4. Servlet
 
