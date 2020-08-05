@@ -1,4 +1,4 @@
-## 如何使用Java Stream模拟SQL语句
+## 如何使用Java Stream编写等效的常用SQL语句
 
 -----
 
