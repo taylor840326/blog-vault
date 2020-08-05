@@ -172,3 +172,10 @@ List<Tuple2> stuNameClassNameTuple = students.stream()
 //        }
 ```
 
+
+### 参考资料
+
+```html
+https://blog.jooq.org/2015/08/13/common-sql-clauses-and-their-equivalents-in-java-8-streams/
+
+```
