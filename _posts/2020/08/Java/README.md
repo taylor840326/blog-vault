@@ -12,7 +12,7 @@
 
 ### 3. Optional
 
-[Optional](Optional/README.md)
+[Optional](Fundamentals/Optional/README.md)
 
 ### 4. Servlet
 
