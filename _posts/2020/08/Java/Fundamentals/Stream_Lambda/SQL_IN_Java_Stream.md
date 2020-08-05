@@ -145,9 +145,9 @@ stuAgeCountMap.values().removeIf(m -> m <= 2);
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-class Tuple2{
-    private Object o1;
-    private Object o2;
+class Tuple2<T1,T2>{
+    private T1 o1;
+    private T2 o2;
 
 }
 
