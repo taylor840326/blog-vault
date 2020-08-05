@@ -73,9 +73,113 @@ Stream<String> stringStream = pattern.splitAsStream("a,b,c,d");
 stringStream.forEach(System.out::println);
 ```
 
-### 5. 流的中间操作
+### 5. 集合运算
 
-### 5.1. 筛选与切片
+### 5.1. 交集
+
+```java
+List intersect = list1.stream() .filter(list2::contains) .collect(Collectors.toList());
+```
+
+### 5.2. 并集
+
+```java
+List listAll = list1.parallelStream().collect(toList()); List listAll2 = list2.parallelStream().collect(toList()); listAll.addAll(listAll2);
+```
+
+### 5.3. 并集去重
+
+```java
+List listAllDistinct = listAll.stream() .distinct().collect(toList());
+```
+
+### 5.3. 差集
+
+```java
+list1 - list2 
+List reduce1 = list1.stream().filter(item -> !list2.contains(item)).collect(toList());
+
+list2 - list1 
+List reduce2 = list2.stream().filter(item -> !list1.contains(item)).collect(toList());
+```
+
+### 6. 集合类型转换
+
+### 6.1. List转Map
+
+```java
+/使用Collectors.toMap形式/ Map result = peopleList.stream().collect(Collectors.toMap(p -> p.name, p -> p.age, (k1, k2) -> k1)); //其中Collectors.toMap方法的第三个参数为键值重复处理策略，如果不传入第三个参数，当有相同的键时，会抛出一个IlleageStateException。 //或者 Map<Integer, String> result1 = list.stream().collect(Collectors.toMap(Hosting::getId, Hosting::getName)); //List -> Map<String,Object> List peopleList = new ArrayList<>(); peopleList.add(new People("test1", "111")); peopleList.add(new People("test2", "222")); Map result = peopleList.stream().collect(HashMap::new,(map,p)->map.put(p.name,p.age),Map::putAll);
+
+List 转 Map<Integer,Apple> /**
+
+List -> Map<Integer,Apple>
+需要注意的是：
+toMap 如果集合对象有重复的key，会报错Duplicate key ....
+apple1,apple12的id都为1。
+可以用 (k1,k2)->k1 来设置，如果有重复的key,则保留key1,舍弃key2 */ Map<Integer, Apple> appleMap = appleList.stream().collect(Collectors.toMap(Apple::getId, a -> a,(k1, k2) -> k1));
+List 转 List<Map<String,Object>> List<Map<String,Object>> personToMap = peopleList.stream().map((p) -> { Map<String, Object> map = new HashMap<>(); map.put("name", p.name); map.put("age", p.age); return map; }).collect(Collectors.toList()); //或者 List<Map<String,Object>> personToMap = peopleList.stream().collect(ArrayList::new, (list, p) -> { Map<String, Object> map = new HashMap<>(); map.put("name", p.name); map.put("age", p.age); list.add(map); }, List::addAll);
+
+字典查询和数据转换 toMap时，如果value为null,会报空指针异常 解决办法一：
+
+Map<String, List> resultMaps = Arrays.stream(dictTypes) .collect(Collectors.toMap(i -> i, i -> Optional.ofNullable(dictMap.get(i)).orElse(new ArrayList<>()), (k1, k2) -> k2));
+
+解决办法二：
+
+Map<String, List> resultMaps = Arrays.stream(dictTypes) .filter(i -> dictMap.get(i) != null).collect(Collectors.toMap(i -> i, dictMap::get, (k1, k2) -> k2));
+
+解决办法三：
+
+Map<String, String> memberMap = list.stream().collect(HashMap::new, (m,v)-> m.put(v.getId(), v.getImgPath()),HashMap::putAll); System.out.println(memberMap);
+
+解决办法四：
+
+Map<String, String> memberMap = new HashMap<>(); list.forEach((answer) -> memberMap.put(answer.getId(), answer.getImgPath())); System.out.println(memberMap);
+
+Map<String, String> memberMap = new HashMap<>(); for (Member member : list) { memberMap.put(member.getId(), member.getImgPath()); }
+
+假设有一个User实体类，有方法getId(),getName(),getAge()等方法，现在想要将User类型的流收集到一个Map中，示例如下：
+
+Stream userStream = Stream.of(new User(0, "张三", 18), new User(1, "张四", 19), new User(2, "张五", 19), new User(3, "老张", 50));
+
+Map<Integer, User> userMap = userSteam.collect(Collectors.toMap(User::getId, item -> item));
+
+假设要得到按年龄分组的Map<Integer,List>,可以按这样写：
+
+Map<Integer, List> ageMap = userStream.collect(Collectors.toMap(User::getAge, Collections::singletonList, (a, b) -> { List resultList = new ArrayList<>(a); resultList.addAll(b); return resultList; }));
+
+Map<Integer, String> map = persons .stream() .collect(Collectors.toMap( p -> p.age, p -> p.name, (name1, name2) -> name1 + ";" + name2));
+
+System.out.println(map); // {18=Max, 23=Peter;Pamela, 12=David}
+```
+
+
+### 6.2. Map转List
+
+```java
+List list = map.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey())) .map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
+
+List list = map.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getValue)).map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
+
+List list = map.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
+```
+
+### 6.3. Map转Map
+
+```java
+//示例1 Map<String, List> 转 Map<String,User> Map<String,List> map = new HashMap<>(); map.put("java", Arrays.asList("1.7", "1.8")); map.entrySet().stream();
+
+@Getter @Setter @AllArgsConstructor public static class User{ private List versions; }
+
+Map<String, User> collect = map.entrySet().stream() .collect(Collectors.toMap( item -> item.getKey(), item -> new User(item.getValue())));
+
+//示例2 Map<String,Integer> 转 Map<String,Double> Map<String, Integer> pointsByName = new HashMap<>(); Map<String, Integer> maxPointsByName = new HashMap<>();
+
+Map<String, Double> gradesByName = pointsByName.entrySet().stream() .map(entry -> new AbstractMap.SimpleImmutableEntry<>( entry.getKey(), ((double) entry.getValue() / maxPointsByName.get(entry.getKey())) * 100d)) .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+```
+
+### 6. 流的中间操作
+
+### 6.1. 筛选与切片
 
 filter：过滤流中的某些元素
 limit(n)：获取n个元素
@@ -92,7 +196,7 @@ Stream<Integer> newStream = stream.filter(s -> s > 5) //6 6 7 9 8 10 12 14 14
 newStream.forEach(System.out::println);
 ```
 
-### 5.2. 映射        
+### 6.2. 映射        
 
 map：接收一个函数作为参数，该函数会被应用到每个元素上，并将其映射成一个新的元素。
 flatMap：接收一个函数作为参数，将流中的每个值都换成另一个流，然后把所有流连接成一个流。
@@ -113,7 +217,7 @@ Stream<String> s3 = list.stream().flatMap(s -> {
 s3.forEach(System.out::println); // a b c 1 2 3
 ```
 
-### 5.3. 排序
+### 6.3. 排序
 
 sorted()：自然排序，流中元素需实现Comparable接口
 sorted(Comparator com)：定制排序，自定义Comparator排序器  
@@ -141,7 +245,7 @@ studentList.stream().sorted(
 ).forEach(System.out::println);
 ```
 
-### 5.4. 消费
+### 6.4. 消费
 
 peek：如同于map，能得到流中的每一个元素。但map接收的是一个Function表达式，有返回值；而peek接收的是Consumer表达式，没有返回值。
 
@@ -159,9 +263,9 @@ Student{name='aa', age=100}
 Student{name='bb', age=100}            
 ```
 
-### 6. 流的终止操作
+### 7. 流的终止操作
 
-### 6.1. 匹配、聚合操作
+### 7.1. 匹配、聚合操作
 
 allMatch：接收一个 Predicate 函数，当流中每个元素都符合该断言时才返回true，否则返回false
 noneMatch：接收一个 Predicate 函数，当流中每个元素都不符合该断言时才返回true，否则返回false
@@ -187,7 +291,7 @@ Integer max = list.stream().max(Integer::compareTo).get(); //5
 Integer min = list.stream().min(Integer::compareTo).get(); //1
 ```
 
-### 6.2. 规约操作
+### 7.2. 规约操作
 
 ```text
 Optional<T> reduce(BinaryOperator<T> accumulator)：第一次执行时，accumulator函数的第一个参数为流中的第一个元素，第二个参数为流中元素的第二个元素；第二次执行时，第一个参数为第一次函数执行的结果，第二个参数为流中的第三个元素；依次类推。
@@ -231,7 +335,7 @@ Integer v3 = list.parallelStream().reduce(0,
 System.out.println(v3); //197474048
 ```
 
-### 6.3. 收集操作
+### 7.3. 收集操作
 
 collect：接收一个Collector实例，将流中元素收集成另外一个数据结构。
 
@@ -249,7 +353,7 @@ Collector<T, A, R> 是一个接口，有以下5个抽象方法：
                 
 注：如果对以上函数接口不太理解的话，可参考我另外一篇文章：Java 8 函数式接口
 
-### 6.3.1. Collector 工具库：Collectors
+### 7.3.1. Collector 工具库：Collectors
 
 ```java
 Student s1 = new Student("aa", 10,1);
@@ -365,7 +469,7 @@ Map<Boolean, Long> partitionCounting= students.stream().collect(Collectors.parti
 Integer allAge = list.stream().map(Student::getAge).collect(Collectors.reducing(Integer::sum)).get(); //40
 ```
 
-### 6.3.2. Collectors.toList() 解析
+### 7.3.2. Collectors.toList() 解析
 
 //toList 源码
 ```java
