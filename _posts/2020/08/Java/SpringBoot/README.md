@@ -3,11 +3,11 @@
 
 ### 1.@SpringBootApplication注解
 
-[Entry](core/Entry/README.md)
+[Entry](Cores/Entry/README.md)
 
 ### 2.Spring Bean相关
 
-[Bean](core/bean/README.md)
+[Bean](Cores/Beans/README.md)
 
 ### 3.处理常见的HTTP请求类型
 
@@ -19,23 +19,23 @@
 
 ### 5.读取配置信息
 
-[读取配置](core/config/README.md)
+[读取配置](Cores/Configs/README.md)
 
 ### 6.参数校验
 
-[参数校验](core/validation/README.md)
+[参数校验](Cores/Validation/README.md)
 
 ### 7.全局处理Controller层异常
 
-[错误和异常](error_exception/README.md)
+[错误和异常](ErrorAndException/README.md)
 
 ### 8.JPA相关
 
-[JPA](data_access/jpa/README.md)
+[JPA](DataAccess/JPA/README.md)
 
 ### 9.事务Transactional
 
-[事务](data_access/transactional/README.md)
+[事务](DataAccess/Transactional/README.md)
 
 ### 10.JSON数据处理
 

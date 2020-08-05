@@ -4,15 +4,15 @@
 
 ### 服务热重启
 
-[服务热重启](reload/README.md)
+[服务热重启](Reload/README.md)
 
 ### 1. Java Bean 相关
 
-[Bean](bean/README.md)
+[Bean](Beans/README.md)
 
 ### 2. 读取配置相关
 
-[读取配置](config/README.md)
+[读取配置](Configs/README.md)
 
 ### 3. SpringBoot入库相关
 
@@ -20,8 +20,8 @@
 
 ### 4. CommandLineRunner和ApplicationRunner相关
 
-[CommandLineRunner&&ApplicationRunner](runner/README.md)
+[CommandLineRunner&&ApplicationRunner](Runner/README.md)
 
 ### 5. 参数认证相关
 
-[参数认证](validation/README.md)
+[参数认证](Validation/README.md)
