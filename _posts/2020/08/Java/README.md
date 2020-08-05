@@ -8,7 +8,7 @@
 
 ### 2. Lombok
 
-[Lombok](Lombok/README.md)
+[Lombok](Fundamentals/Lombok/README.md)
 
 ### 3. Optional
 
