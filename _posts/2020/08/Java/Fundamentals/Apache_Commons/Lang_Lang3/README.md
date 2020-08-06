@@ -381,3 +381,7 @@ deserialize(final InputStream inputStream)、deserialize(final byte[] objectData
 ### 14. SystemUtils
 
 主要定义了一些系统底层的常量。比如类路径、操作系统、类型、java版本等等
+
+### 15. StringUtils
+
+[StringUtils](StringUtils.md)
