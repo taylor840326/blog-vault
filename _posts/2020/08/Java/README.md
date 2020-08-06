@@ -16,7 +16,7 @@
 
 ### 4. Servlet
 
-[Servlet](Servlet/README.md)
+[Servlet](JavaWeb/README.md)
 
 ### 5. SpringBoot
 
