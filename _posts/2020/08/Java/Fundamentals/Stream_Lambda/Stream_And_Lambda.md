@@ -48,79 +48,7 @@ stringStream.forEach(System.out::println);
 ```
 
 
-### 6. 集合类型转换
 
-### 6.1. List转Map
-
-```java
-/使用Collectors.toMap形式/ Map result = peopleList.stream().collect(Collectors.toMap(p -> p.name, p -> p.age, (k1, k2) -> k1)); //其中Collectors.toMap方法的第三个参数为键值重复处理策略，如果不传入第三个参数，当有相同的键时，会抛出一个IlleageStateException。 //或者 Map<Integer, String> result1 = list.stream().collect(Collectors.toMap(Hosting::getId, Hosting::getName)); //List -> Map<String,Object> List peopleList = new ArrayList<>(); peopleList.add(new People("test1", "111")); peopleList.add(new People("test2", "222")); Map result = peopleList.stream().collect(HashMap::new,(map,p)->map.put(p.name,p.age),Map::putAll);
-
-List 转 Map<Integer,Apple> /**
-
-List -> Map<Integer,Apple>
-需要注意的是：
-toMap 如果集合对象有重复的key，会报错Duplicate key ....
-apple1,apple12的id都为1。
-可以用 (k1,k2)->k1 来设置，如果有重复的key,则保留key1,舍弃key2 */ Map<Integer, Apple> appleMap = appleList.stream().collect(Collectors.toMap(Apple::getId, a -> a,(k1, k2) -> k1));
-List 转 List<Map<String,Object>> List<Map<String,Object>> personToMap = peopleList.stream().map((p) -> { Map<String, Object> map = new HashMap<>(); map.put("name", p.name); map.put("age", p.age); return map; }).collect(Collectors.toList()); //或者 List<Map<String,Object>> personToMap = peopleList.stream().collect(ArrayList::new, (list, p) -> { Map<String, Object> map = new HashMap<>(); map.put("name", p.name); map.put("age", p.age); list.add(map); }, List::addAll);
-
-字典查询和数据转换 toMap时，如果value为null,会报空指针异常 解决办法一：
-
-Map<String, List> resultMaps = Arrays.stream(dictTypes) .collect(Collectors.toMap(i -> i, i -> Optional.ofNullable(dictMap.get(i)).orElse(new ArrayList<>()), (k1, k2) -> k2));
-
-解决办法二：
-
-Map<String, List> resultMaps = Arrays.stream(dictTypes) .filter(i -> dictMap.get(i) != null).collect(Collectors.toMap(i -> i, dictMap::get, (k1, k2) -> k2));
-
-解决办法三：
-
-Map<String, String> memberMap = list.stream().collect(HashMap::new, (m,v)-> m.put(v.getId(), v.getImgPath()),HashMap::putAll); System.out.println(memberMap);
-
-解决办法四：
-
-Map<String, String> memberMap = new HashMap<>(); list.forEach((answer) -> memberMap.put(answer.getId(), answer.getImgPath())); System.out.println(memberMap);
-
-Map<String, String> memberMap = new HashMap<>(); for (Member member : list) { memberMap.put(member.getId(), member.getImgPath()); }
-
-假设有一个User实体类，有方法getId(),getName(),getAge()等方法，现在想要将User类型的流收集到一个Map中，示例如下：
-
-Stream userStream = Stream.of(new User(0, "张三", 18), new User(1, "张四", 19), new User(2, "张五", 19), new User(3, "老张", 50));
-
-Map<Integer, User> userMap = userSteam.collect(Collectors.toMap(User::getId, item -> item));
-
-假设要得到按年龄分组的Map<Integer,List>,可以按这样写：
-
-Map<Integer, List> ageMap = userStream.collect(Collectors.toMap(User::getAge, Collections::singletonList, (a, b) -> { List resultList = new ArrayList<>(a); resultList.addAll(b); return resultList; }));
-
-Map<Integer, String> map = persons .stream() .collect(Collectors.toMap( p -> p.age, p -> p.name, (name1, name2) -> name1 + ";" + name2));
-
-System.out.println(map); // {18=Max, 23=Peter;Pamela, 12=David}
-```
-
-
-### 6.2. Map转List
-
-```java
-List list = map.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey())) .map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
-
-List list = map.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getValue)).map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
-
-List list = map.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
-```
-
-### 6.3. Map转Map
-
-```java
-//示例1 Map<String, List> 转 Map<String,User> Map<String,List> map = new HashMap<>(); map.put("java", Arrays.asList("1.7", "1.8")); map.entrySet().stream();
-
-@Getter @Setter @AllArgsConstructor public static class User{ private List versions; }
-
-Map<String, User> collect = map.entrySet().stream() .collect(Collectors.toMap( item -> item.getKey(), item -> new User(item.getValue())));
-
-//示例2 Map<String,Integer> 转 Map<String,Double> Map<String, Integer> pointsByName = new HashMap<>(); Map<String, Integer> maxPointsByName = new HashMap<>();
-
-Map<String, Double> gradesByName = pointsByName.entrySet().stream() .map(entry -> new AbstractMap.SimpleImmutableEntry<>( entry.getKey(), ((double) entry.getValue() / maxPointsByName.get(entry.getKey())) * 100d)) .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-```
 
 ### 6. 流的中间操作
 
@@ -300,31 +228,6 @@ Collector<T, A, R> 是一个接口，有以下5个抽象方法：
 
 ### 7.3.1. Collector 工具库：Collectors
 
-```java
-Student s1 = new Student("aa", 10,1);
-Student s2 = new Student("bb", 20,2);
-Student s3 = new Student("cc", 10,3);
-List<Student> list = Arrays.asList(s1, s2, s3);
- 
-转成list
-List<Integer> ageList = list.stream().map(Student::getAge).collect(Collectors.toList()); // [10, 20, 10]
- 
-转成set
-Set<Integer> ageSet = list.stream().map(Student::getAge).collect(Collectors.toSet()); // [20, 10]
- 
-转成map,注:key不能相同，否则报错
-Map<String, Integer> studentMap = list.stream().collect(Collectors.toMap(Student::getName, Student::getAge)); // {cc=10, bb=20, aa=10}
-
-转成LinkedList
-LinkedList<Student> linkedList = students.stream().collect(Collectors.toCollection(LinkedList::new));
-
-
-转成CopyOnWriteArrayList
-CopyOnWriteArrayList<Student> copyOnWriteArrayList = students.stream().collect(Collectors.toCollection(CopyOnWriteArrayList::new));
-
-收集后转换为不可变List
-ImmutableList<String> collect = students.stream().collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf))
-```
 
 ```java
 字符串分隔符连接
