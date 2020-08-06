@@ -1,32 +1,6 @@
 ## Java 8 stream的详细用法
 -----
 
-
-### 1. 概述
-
-Stream 是 Java8 中处理集合的关键抽象概念，它可以指定你希望对集合进行的操作。
-
-可以执行非常复杂的查找、过滤和映射数据等操作。
-
-使用Stream API 对集合数据进行操作，就类似于使用 SQL 执行的数据库查询。
-
-也可以使用 Stream API 来并行执行操作。
-
-简而言之，Stream API 提供了一种高效且易于使用的处理数据的方式。
-
-### 2. 特点：
-
-1. 不是数据结构，不会保存数据。
-1. 不会修改原来的数据源，它会将操作后的数据保存到另外一个对象中。（保留意见：毕竟peek方法可以修改流中元素）
-1. 惰性求值，流在中间处理过程中，只是对操作进行了记录，并不会立即执行，需要等到执行终止操作的时候才会进行实际的计算。
-
-### 3. 分类
-
-1. 无状态：指元素的处理不受之前元素的影响；
-1. 有状态：指该操作只有拿到所有元素之后才能继续下去。
-1. 非短路操作：指必须处理所有元素才能得到最终结果；
-1. 短路操作：指遇到某些符合条件的元素就可以得到最终结果，如 A || B，只要A为true，则无需判断B的结果。
-
 ### 4. 常见操作
 
 ### 4.1. 流的常用创建方法
@@ -73,35 +47,6 @@ Stream<String> stringStream = pattern.splitAsStream("a,b,c,d");
 stringStream.forEach(System.out::println);
 ```
 
-### 5. 集合运算
-
-### 5.1. 交集
-
-```java
-List intersect = list1.stream() .filter(list2::contains) .collect(Collectors.toList());
-```
-
-### 5.2. 并集
-
-```java
-List listAll = list1.parallelStream().collect(toList()); List listAll2 = list2.parallelStream().collect(toList()); listAll.addAll(listAll2);
-```
-
-### 5.3. 并集去重
-
-```java
-List listAllDistinct = listAll.stream() .distinct().collect(toList());
-```
-
-### 5.3. 差集
-
-```java
-list1 - list2 
-List reduce1 = list1.stream().filter(item -> !list2.contains(item)).collect(toList());
-
-list2 - list1 
-List reduce2 = list2.stream().filter(item -> !list1.contains(item)).collect(toList());
-```
 
 ### 6. 集合类型转换
 
