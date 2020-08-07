@@ -31,7 +31,7 @@
 
 ### 8.JPA相关
 
-[JPA](DataAccess/JPA/README.md)
+[JPA](DataAccess/ORM/JPA/README.md)
 
 ### 9.事务Transactional
 
