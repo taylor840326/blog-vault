@@ -293,7 +293,7 @@ public interface ConcreteRepository
 ```
 
 
-### 4. 查询返回定制
+### 8.4. 查询返回定制
 
 ```java
 class Person {
