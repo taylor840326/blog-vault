@@ -407,27 +407,13 @@ Integer allAge = list.stream().map(Student::getAge).collect(Collectors.reducing(
 
 ### 5.1. 集合操作
 
-### 5.1.1. 交集
-
-### 5.1.2. 并集
-
-### 5.1.3. 并集去重
-
-### 5.1.4. 差集
-
+[示例](Stream/CollectionOperation/README.md)
 
 ### 5.2. 集合类型转换
 
-### 5.2.1. 
+[示例](Stream/TypeConvert/README.md)
 
-
-### 5.3. 聚合统计
-
-### 5.3.1. 分组聚合
-
-### 5.3.2. 分区聚合
-
-### 5.4. 使用Stream模拟SQL
+### 5.3. 使用Stream模拟SQL
 
 [示例](SQL_IN_Java_Stream.md)
 
