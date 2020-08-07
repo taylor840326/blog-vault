@@ -115,69 +115,183 @@ for (int i = 1; i <= 10; i++) {
     students.add(student);
 }
 
-Map<Long, String> listToMap = students.stream().collect(Collectors.toMap(Student::getId, Student::getName,(k1,k2)->k1));
+List<HashMap<Long, String>> stuListMap = students.stream()
+    .map(stu -> {
+        HashMap<Long, String> longStringHashMap = new HashMap<>();
+        longStringHashMap.put(stu.getId(), stu.getName());
+        return longStringHashMap;
+    })
+    .collect(Collectors.toList());
+
 for (Long aLong : listToMap.keySet()) {
     System.out.println(listToMap.get(aLong));
 }
 ```
-List<Map<String,Object>> personToMap = peopleList.stream().map((p) -> { Map<String, Object> map = new HashMap<>(); map.put("name", p.name); map.put("age", p.age); return map; }).collect(Collectors.toList()); //或者 List<Map<String,Object>> personToMap = peopleList.stream().collect(ArrayList::new, (list, p) -> { Map<String, Object> map = new HashMap<>(); map.put("name", p.name); map.put("age", p.age); list.add(map); }, List::addAll);
+或者另外一种实现
 
-字典查询和数据转换 toMap时，如果value为null,会报空指针异常 解决办法一：
+```java
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+class Student {
+        private Long id;
+    private String name;
+}
+ArrayList<Student> students = new ArrayList<>();
+for (int i = 1; i <= 20; i++) {
+    Student student = new Student();
+    student.setId((long) i % 5);
+    student.setName("s" + i);
+    students.add(student);
+}
 
+ArrayList<Map<Long,String>> stuListMap02 = students.stream()
+    .collect(ArrayList::new, (list, p) -> {
+        HashMap<Long, String> longStringHashMap = new HashMap<>();
+        longStringHashMap.put(p.getId(), p.getName());
+        list.add(longStringHashMap);
+    }, List::addAll);
+
+for (Map<Long, String> longStringMap : stuListMap02) {
+    for (Long aLong : longStringMap.keySet()) {
+    System.out.println(longStringMap.get(aLong));
+    }
+}
+
+```
+
+### 1.8. 转换到toMap时，如果value为null,会报空指针异常 
+
+示例：
+
+```java
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+class Student {
+      private Long id;
+      private String name;
+}
+ArrayList<Student> students = new ArrayList<>();
+for (int i = 1; i <= 20; i++) {
+      Student student = new Student();
+      student.setId((long)i);
+      if(i% 5 == 0){
+          student.setName(null); //因为是null，下面的toMap会报空指针异常。
+      }else{
+          student.setName("s" + i);
+      }
+      students.add(student);
+}
+
+Map<Long, String> stuListToMap = students.stream().collect(Collectors.toMap(Student::getId, Student::getName));
+for (Long i : stuListToMap.keySet()) {
+    System.out.println(stuListToMap.get(i));
+}
+```
+
+解决办法一：
+
+```java
 Map<String, List> resultMaps = Arrays.stream(dictTypes) .collect(Collectors.toMap(i -> i, i -> Optional.ofNullable(dictMap.get(i)).orElse(new ArrayList<>()), (k1, k2) -> k2));
+```
 
 解决办法二：
 
+```java
 Map<String, List> resultMaps = Arrays.stream(dictTypes) .filter(i -> dictMap.get(i) != null).collect(Collectors.toMap(i -> i, dictMap::get, (k1, k2) -> k2));
+```
 
 解决办法三：
 
+```java
 Map<String, String> memberMap = list.stream().collect(HashMap::new, (m,v)-> m.put(v.getId(), v.getImgPath()),HashMap::putAll); System.out.println(memberMap);
+```
 
 解决办法四：
 
+```java
 Map<String, String> memberMap = new HashMap<>(); list.forEach((answer) -> memberMap.put(answer.getId(), answer.getImgPath())); System.out.println(memberMap);
 
 Map<String, String> memberMap = new HashMap<>(); for (Member member : list) { memberMap.put(member.getId(), member.getImgPath()); }
-
-假设有一个User实体类，有方法getId(),getName(),getAge()等方法，现在想要将User类型的流收集到一个Map中，示例如下：
-
-Stream userStream = Stream.of(new User(0, "张三", 18), new User(1, "张四", 19), new User(2, "张五", 19), new User(3, "老张", 50));
-
-Map<Integer, User> userMap = userSteam.collect(Collectors.toMap(User::getId, item -> item));
-
-假设要得到按年龄分组的Map<Integer,List>,可以按这样写：
-
-Map<Integer, List> ageMap = userStream.collect(Collectors.toMap(User::getAge, Collections::singletonList, (a, b) -> { List resultList = new ArrayList<>(a); resultList.addAll(b); return resultList; }));
-
-Map<Integer, String> map = persons .stream() .collect(Collectors.toMap( p -> p.age, p -> p.name, (name1, name2) -> name1 + ";" + name2));
-
-System.out.println(map); // {18=Max, 23=Peter;Pamela, 12=David}
 ```
 
 
-### 1.7. Map转List
+
+### 1.8. Map转List
 
 ```java
-List list = map.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey())) .map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+class Student {
+      private Long id;
+      private String name;
+      private Long age;
+}
 
-List list = map.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getValue)).map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
+HashMap<Long, Student> studentMap = new HashMap<>();
+for (int i = 1; i < 10; i++) {
+     studentMap.put((long)i,new Student((long)i,"Stu"+i,(long)(i*10)/3));
+}
 
-List list = map.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(e -> new Person(e.getKey(), e.getValue())).collect(Collectors.toList());
+//Map转换成List<Student>
+List<Student> result = studentMap.keySet().stream()
+          .map(stu -> studentMap.get(stu))
+          .collect(Collectors.toList());
+
+//第二中转换方法
+List<Student> result02 = studentMap.entrySet().stream()
+          .map(stu -> stu.getValue())
+          .collect(Collectors.toList());
+
+//根据Map的Key排序
+List<Student> result03 = studentMap.entrySet().stream()
+          .sorted(Comparator.comparing(e -> e.getKey()))
+          .map(stu -> stu.getValue())
+          .collect(Collectors.toList());
+
+List<Student> result04 = studentMap.entrySet().stream()
+         .sorted(Comparator.comparing(Map.Entry::getKey))
+         .map(stu -> stu.getValue())
+         .collect(Collectors.toList());
+
+List<Student> result05 = studentMap.entrySet().stream()
+          .sorted(Map.Entry.comparingByKey())
+          .map(stu -> stu.getValue())
+          .collect(Collectors.toList());
 ```
 
 ### 1.8. Map转Map
 
 ```java
-//示例1 Map<String, List> 转 Map<String,User> Map<String,List> map = new HashMap<>(); map.put("java", Arrays.asList("1.7", "1.8")); map.entrySet().stream();
+//示例1 Map<String, List> 转 Map<String,User> 
 
-@Getter @Setter @AllArgsConstructor public static class User{ private List versions; }
+Map<String,List> map = new HashMap<>(); 
+map.put("java", Arrays.asList("1.7", "1.8"));
+map.entrySet().stream();
 
-Map<String, User> collect = map.entrySet().stream() .collect(Collectors.toMap( item -> item.getKey(), item -> new User(item.getValue())));
+@Getter
+@Setter 
+@AllArgsConstructor 
+public static class User{ 
+    private List versions; 
+}
 
-//示例2 Map<String,Integer> 转 Map<String,Double> Map<String, Integer> pointsByName = new HashMap<>(); Map<String, Integer> maxPointsByName = new HashMap<>();
+Map<String, User> collect = map.entrySet().stream() 
+    .collect(Collectors.toMap( item -> item.getKey(), item -> new User(item.getValue())));
 
-Map<String, Double> gradesByName = pointsByName.entrySet().stream() .map(entry -> new AbstractMap.SimpleImmutableEntry<>( entry.getKey(), ((double) entry.getValue() / maxPointsByName.get(entry.getKey())) * 100d)) .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+//示例2 Map<String,Integer> 转 Map<String,Double> 
+
+Map<String, Integer> pointsByName = new HashMap<>(); 
+Map<String, Integer> maxPointsByName = new HashMap<>();
+
+Map<String, Double> gradesByName = pointsByName.entrySet().stream()
+    .map(entry -> new AbstractMap.SimpleImmutableEntry<>( entry.getKey(), ((double) entry.getValue() / maxPointsByName.get(entry.getKey())) * 100d)) 
+    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 ```
 
 
