@@ -34,6 +34,38 @@ Analysis： 文本分析是把全文本转换一系列单词(term/token)的过�
 
 将切分的单词进行加工。大小写转换、去掉词、或者增加词
 
+### 1.3. _analyzer API的三种使用方法
+
+#### 直接指定Analyzer进行测试
+
+```json
+GET /_analyze
+{
+  "analyzer": "standard",
+  "text": "Hello the world."
+}
+```
+
+#### 指定索引的字段进行测试
+
+```json
+POST books/_analyze
+{
+  "field": "title",
+  "text": "Hello the world."
+}
+```
+
+#### 自定义分词器进行测试
+
+```json
+POST /_analyze
+{
+  "tokenizer": "standard",
+  "filter": ["lowercase"],
+  "text": "Hello the world."
+}
+```
 
 ### 2. Elasticsearch的内置分词器
 
