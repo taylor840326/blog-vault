@@ -10,6 +10,14 @@ mapping 是用来定义文档及其字段的存储方式、索引方式的手段
 1. 格式化时间格式
 1. 自定义规则，用于控制动态添加字段的映射
 
+Mapping会吧JSON文档映射成Lucene所需要的扁平格式
+
+一个Mapping属于一个索引的Type:
+
+1. 每个文档都属于一个Type
+1. 一个Type有一个Mapping定义
+1. 7.0开始，不需要在Mapping定义中指定Type信息
+
 ### 2. Mapping Type
 
 每个索引都拥有唯一的 mapping type，用来决定文档将如何被索引。

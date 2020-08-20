@@ -237,7 +237,7 @@ _source支持使用通配符
 _source["name*","desc*"]
 ```
 
-### 脚本字段
+### 1.2.4. 脚本字段
 
 通过脚本字段可以对某个列计算后新生成一个字段
 
@@ -261,3 +261,74 @@ GET /movies/_search
 ```
 
 订单中有不同的汇率，需要结合汇率对订单价格进行排序.
+
+### 1.2.5. 使用查询表达式 - Match
+
+```html
+GET /movies/_doc/_search
+{
+    "query": {
+        "match":{
+            "comment":"Last Christmas"          //默认是OR操作
+        }
+    }
+}
+```
+
+```html
+GET /movies/_doc/_search
+{
+    "query":{
+        "match":{
+            "comment":{
+                "query":"Last Christmas",
+                "operator": "AND"           //需要强制指定为AND操作
+            }
+        }
+    }
+}
+```
+
+### 1.2.6. 短语搜索 - Match Phrase
+
+```html
+GET /movies/_doc/_search
+{
+    "query":{
+        "match_phrase"{
+            "comment":{
+                "query":"Song Last Christmas",
+                "slop":1            //允许哥哥英文字符中间有一个其他字符。比如： Song A Last B Christmas.
+            }
+        }
+    }
+}
+```
+
+### 1.2.7 Query String 查询
+
+类似URI查询
+
+```html
+POST /movies/_search
+{
+    "query":{
+        "query_string":{
+            "default_field":"name",
+            "query":"Ruan AND Yiming"
+        }
+    }
+}
+```
+
+```html
+POST /movies/_search
+{
+    "query":{
+        "query_string":{
+            "fields":["name","about"],
+            "query":"(Ruan AND Yiming) OR (Java AND Elasticsearch)"
+        }
+    }
+}
+```
