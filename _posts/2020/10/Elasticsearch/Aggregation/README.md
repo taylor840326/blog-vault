@@ -148,3 +148,68 @@ GET kibana_sample_data_flights/_search
   }
 }
 ```
+
+### 嵌套
+
+```html
+GET kibana_sample_data_flights/_search
+{
+  "size": 0,
+  "aggs": {
+    "flight_dest": {
+      "terms": {
+        "field": "DestCountry"
+      },
+      "aggs":{
+           "average_price":{
+                "avg":{
+                    "field":"AvgTicketPrice"
+                }
+            },
+            "weather":{
+                "term":{
+                    "field":"DestWeather"
+                }
+            }
+            ...
+      }  
+    }  
+  }
+}
+
+{
+  ...
+  "hits": {
+    "total": 123423,
+    "max_score": 0.0,
+    "hits": []
+  },
+  "aggregations": {
+    "flight_dest": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 3187,
+      "bucket": [
+        {
+          "key": "IT",
+          "doc_count": 2371,
+          "weather":{
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count":0,
+            "bucket":[
+                {
+                    "key":"Sunny",
+                    "doc_count":209
+                }
+                ...
+            ]
+          }
+          "max_price":{value: 1199.729xxxx} 
+          "min_price":{value: 100.729xxxx} 
+          "average_price":{value: 595.729xxxx} 
+        } ,
+        ...
+      ]
+    }
+  }
+}
+```
