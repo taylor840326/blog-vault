@@ -103,3 +103,53 @@ PUT users/_doc/2
     "interests": ["reading","music"]
 }
 ```
+
+### 6. 多字段类型
+
+多字段特性可以实现以下一些功能：
+
+```text
+1. 厂商名字实现精确匹配
+    需要增加一个keyword字段
+2.使用不同的analyzer
+    不同语言
+    pinyin字段的搜索
+    还支持为搜索和索引指定不同的analyzer
+```
+
+```html
+PUT products
+{
+    "mapping":{
+        "properties":{
+            "company":{
+                "type":"text",
+                "fields": {
+                    "keyword":{
+                        "type":"keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "comment":{
+                "type":"text",
+                "fields":{
+                    "english_comment":{
+                        "type":"text",
+                        "analyzer":"english",
+                        "search_analyzer":"english"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+精确值Exact Value不需要做分词处理
+
+Elasticsearch为每个字段创建一个倒排索引
+
+Exact Value在索引时，不需要做特殊的粉刺处理
+
+
