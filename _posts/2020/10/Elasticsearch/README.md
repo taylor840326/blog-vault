@@ -62,7 +62,7 @@ Dynamic Template支持在具体的索引上指定规则，为新增的字段指�
 
 [Elasticsearch查询](Query/Query.md)
 
-[分词器](Analyzer.md)
+[分词器](Analyzer/Analyzer.md)
 
 [应用示例](Elasticsearch_SpringBoot.md)
 
