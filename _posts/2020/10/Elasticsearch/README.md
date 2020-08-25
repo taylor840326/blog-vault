@@ -58,13 +58,13 @@ Dynamic Template支持在具体的索引上指定规则，为新增的字段指�
 
 [Mapping](Mapping/Mapping.md)
 
-[倒排索引](Inverted_index.md)
+[倒排索引](Inverted_index/Inverted_index.md)
 
 [Elasticsearch查询](Query/Query.md)
 
 [分词器](Analyzer/Analyzer.md)
 
-[应用示例](Elasticsearch_SpringBoot.md)
+[应用示例](Practice/Elasticsearch_SpringBoot.md)
 
 
 ### 自我测试
