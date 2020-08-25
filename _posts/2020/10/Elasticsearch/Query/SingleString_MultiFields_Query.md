@@ -2,6 +2,30 @@
 
 -----
 
+### 1. 应用场景
+
+### 1.1. 最佳字段(Best Fields)
+
+当字段之间相互竞争，又相互关联。例如title和body这样的字段。评分来自最匹配字段
+
+### 1.2. 多数字段(Most Fields)
+
+处理英文内容时： 一种常见的手段是，在主字段(English Analyzer)，抽取词干、加入同义词，以匹配更多的文档。
+
+相同的文本，加入子字段(Standard Analyzer)，以提供更加精确的匹配，其他字段作为匹配文档提高相关度的信号
+
+匹配字段越多越好
+
+### 1.3. 混合字段(Cross Field)
+
+对于某些实体，例如人名、地址、图书信息。
+
+需要在多个字段中确定信息，单个字段只能作为整体的一部分。
+
+希望在任何这些列出的字段中找到尽可能多的词。
+
+### 示例
+
 ```html
 PUT /blogs/_doc/1
 {
@@ -74,4 +98,26 @@ GET /blogs/_search
 
 Tie Breaker是一个介于0-1之间的浮点数。0代表使用最佳匹配；1代表所有语句同等重要。
 
+
+
+### Multi Match Query
+
+Best Fields 是默认类型，可以不用指定
+
+Minimum should match等参数可以传递生成的query中
+
+```html
+GET /blogs/_search
+{
+  "query": {
+    "multi_match": {
+      "type": "best_fields", 
+      "query": "Quick pets",
+      "fields": ["title","body"],
+      "tie_breaker": 0.2,
+      "minimum_should_match": "20%"
+    }
+  }
+}
+```
 
