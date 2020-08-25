@@ -60,7 +60,7 @@ Dynamic Template支持在具体的索引上指定规则，为新增的字段指�
 
 [倒排索引](Inverted_index/Inverted_index.md)
 
-[Elasticsearch查询](Query/Query.md)
+[Elasticsearch查询](Search/Query.md)
 
 [分词器](Analyzer/Analyzer.md)
 
