@@ -162,7 +162,4 @@ POST /articles/_search
         }
     }
 }
-
-
-
 ```
