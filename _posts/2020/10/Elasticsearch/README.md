@@ -56,15 +56,15 @@ Index Template可以定义Mapping和Settings，并自动的应用到新创建的
 
 Dynamic Template支持在具体的索引上指定规则，为新增的字段指定相应的Mappings。
 
-[Mapping](Mapping/Mapping.md)
+[Mapping](Dev/Mapping/Mapping.md)
 
-[倒排索引](Inverted_index/Inverted_index.md)
+[倒排索引](Dev/Inverted_index/Inverted_index.md)
 
-[Elasticsearch查询](Search/Query.md)
+[Elasticsearch查询](Dev/Search/Query.md)
 
-[分词器](Analyzer/Analyzer.md)
+[分词器](Dev/Analyzer/Analyzer.md)
 
-[应用示例](Practice/Elasticsearch_SpringBoot.md)
+[应用示例](Dev/Practice/Elasticsearch_SpringBoot.md)
 
 
 ### 自我测试

@@ -201,7 +201,7 @@ Fetch阶段的目的：获取数据。
 
 ### 8. Lucence的内部结构时什么
 
-![](../images/Lucene.webp)
+![](../../images/Lucene.webp)
 
 ### 9. 对于GC，使用Elasticsearch需要注意的内容
 
