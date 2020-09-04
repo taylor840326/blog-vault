@@ -181,6 +181,7 @@ $ sudo diskutil mount disk0s1
 ```
 
 用ProperTree修改config.plist,在Kernel -> Add 下添加一组配置。可以参考已存在的配置
+
 选中最后一个配置组名，比如11，然后Command + C复制，Command+V粘贴就拷贝了一个新的配置
 
 ![](itlwm.png)
@@ -193,4 +194,4 @@ $ sudo diskutil mount disk0s1
 https://github.com/OpenIntelWireless/HeliPort/releases/download/v1.0.0/HeliPort.dmg
 ```
 
-以上步骤做完以后，从起机器看看无线起来了吗。不过要注意**WPA Enterprise**协议不支持哦。
+以上步骤做完以后，重启机器看看无线起来了吗。不过要注意**WPA Enterprise**协议不支持哦。
