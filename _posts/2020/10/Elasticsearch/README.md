@@ -26,11 +26,23 @@ Elastic Stack开元了X-Pack在内的相关代码。作为商业解决方案，X
 ```
 
 
-### 运维相关
+### 2. 导航目录
+
+### 2.1. 运维相关
 
 [搭建高可用集群]()
 
 详细讲述如何搭建一套高可用的ES集群，集群的硬件如何规划。
+
+[数据的备份与恢复]()
+
+[ES版本升级方案]()
+
+ES的软件大版本和小版本的滚动升级。
+
+[集群的监控与维护]()
+
+### 2.2. 开发相关
 
 [索引生命周期管理]()
 
@@ -39,18 +51,11 @@ Elastic Stack开元了X-Pack在内的相关代码。作为商业解决方案，X
 1. 索引上线、下线维护
 1. 索引的备份和恢复
 
-[ES版本升级方案]()
-
-ES的软件大版本和小版本的滚动升级。
-
-[集群的维护]()
-
-
-### 开发相关
-
 [Mapping](Dev/Mapping/Mapping.md)
 
 [倒排索引](Dev/Inverted_index/Inverted_index.md)
+
+[Template模板]()
 
 [Elasticsearch查询](Dev/Search/Query.md)
 
@@ -58,9 +63,19 @@ ES的软件大版本和小版本的滚动升级。
 
 [应用示例](Dev/Practice/Elasticsearch_SpringBoot.md)
 
-[备份和恢复](Ops/Backup_Restore/README.md)
 
-### ML && NLP
+### 消费Kafka数据存入到Elasticsearch
+
+### Spark与Elasticsearch集成
+
+### Flink与Elasticsearch集成
+
+
+### 2.3. ML && NLP
+
+Elasticsearch在一些机器学习和自然语言处理方面的应用
+
+### 2.3.1. HanLP
 
 
 
