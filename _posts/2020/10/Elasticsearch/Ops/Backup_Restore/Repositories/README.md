@@ -26,7 +26,6 @@
 
 ### 3. 创建存储库
 
-### 3.1. 创建NFS存储库
 
 首先，elasticsearch.yml 的配置文件中注明可以用作备份路径 path.repo ，如下所示：
 
@@ -41,10 +40,6 @@ PUT /_snapshot/my_backup
     "location": "/mount/backups/my_backup"
   }
 }
-
-### 3.2. 创建HDFS存储库
-
-
 
 之后我们就可以在这个 repository 中来备份数据了。
 
