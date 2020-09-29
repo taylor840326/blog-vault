@@ -141,42 +141,42 @@ Reference Manuals and Official Guides
 
 ### 2.5. Blog Posts
 
-[Distributed transactions with multiple databases, Spring Boot, Spring Data JPA and Atomikos]()
+[Distributed transactions with multiple databases, Spring Boot, Spring Data JPA and Atomikos](http://fabiomaffioletti.me/blog/2014/04/15/distributed-transactions-multiple-databases-spring-boot-spring-data-jpa-atomikos/)
 
-[Spring Data repositories with multiple databases]()
+[Spring Data repositories with multiple databases](http://scattercode.co.uk/2013/11/18/spring-data-multiple-databases/)
 
-[The Persistence Layer with Spring Data JPA]()
+[The Persistence Layer with Spring Data JPA](http://www.baeldung.com/2011/12/22/the-persistence-layer-with-spring-data-jpa/)
 
-[Spring JPA Data + Hibernate + MySQL + MAVEN]()
+[Spring JPA Data + Hibernate + MySQL + MAVEN](http://fruzenshtein.com/spring-jpa-data-hibernate-mysql/)
 
-[Spring Data JPA with QueryDSL: Repositories made easy]()
+[Spring Data JPA with QueryDSL: Repositories made easy](https://blog.42.nl/articles/spring-data-jpa-with-querydsl-repositories-made-easy/)
 
-[Spring Data REST in Action]()
+[Spring Data REST in Action](http://www.javacodegeeks.com/2013/08/spring-data-rest-in-action.html)
 
-[Spring MVC 3.2 with Spring Data REST (part 1)]()
+[Spring MVC 3.2 with Spring Data REST (part 1)](http://krams915.blogspot.fi/2012/11/spring-mvc-32-with-spring-data-rest.html)
 
-[Spring MVC 3.2 with Spring Data REST (part 2)]()
+[Spring MVC 3.2 with Spring Data REST (part 2)](http://krams915.blogspot.fi/2012/11/spring-mvc-32-with-spring-data-rest_20.html)
 
-[Spring boot and spring data jpa tutorial (part 1 / 2)]()
+[Spring boot and spring data jpa tutorial (part 1 / 2)](http://ufasoli.blogspot.ch/2014/02/spring-boot-and-spring-data-jpa.html)
 
-[Spring boot and spring data jpa tutorial (part 2 / 2)]()
+[Spring boot and spring data jpa tutorial (part 2 / 2)](http://ufasoli.blogspot.fi/2014/02/spring-boot-and-spring-data-jpa_6.html)
 
 ### 2.6. Videos
 
-[An Introduction to Spring Data]()
+[An Introduction to Spring Data](http://www.youtube.com/watch?v=jIae_pcG-9M)
 
-[Spring Data Repositories – A Deep Dive]()
+[Spring Data Repositories – A Deep Dive](http://www.youtube.com/watch?v=JobDILuItcU)
 
-[An Introduction to Spring Data JPA]()
+[An Introduction to Spring Data JPA](http://www.youtube.com/watch?v=Yg2gCpBCkZw)
 
-[Spring Data JPA Configuration Tutorial]()
+[Spring Data JPA Configuration Tutorial](http://www.youtube.com/watch?v=kM7Gr3XTzIg)
 
-[Configuring Spring Data with a MySQL Database]()
+[Configuring Spring Data with a MySQL Database](http://www.youtube.com/watch?v=8B-mEllEuWE)
 
-[Spring Data JPA: Defining Query Methods on Repositories]()
+[Spring Data JPA: Defining Query Methods on Repositories](http://www.youtube.com/watch?v=SKRtcK7Fp3I)
 
-[Spring Data REST: Easily export JPA entities directly to the web]()
+[Spring Data REST: Easily export JPA entities directly to the web](http://www.youtube.com/watch?v=kaiH1HsacPs)
 
-[Spring Data Repositories – Best Practices]()
+[Spring Data Repositories – Best Practices](http://www.youtube.com/watch?v=hwNyzkWENE0)
 
-[Integration Testing of Spring Data JPA Repositories]()
+[Integration Testing of Spring Data JPA Repositories](http://www.youtube.com/watch?v=TItcLbGTRK0)
