@@ -1,8 +1,12 @@
 ## Spring Data JPA Tutorial
 -----
 
-小白零基础学习Spring Data，没有一个系统的知识总结学起来很费劲。
+小白零基础学习Spring Data，没有一个系统的知识总结框架学起来很费劲。
 
+总是感觉有无数的坑需要填，今天找到一篇外国大神文章感觉不错，基于这个文章整理我的Spring Data JPA知识体系.
+
+
+文章的地址为：
 ```html
 https://www.petrikainulainen.net/spring-data-jpa-tutorial/
 ```
@@ -67,71 +71,72 @@ This section showcases useful material created by other developers. If you have 
 
 ### 2.1. Java Persistence API
 
-[Reference Manuals and Official Guides]()
+Reference Manuals and Official Guides
 
-[The Java EE 6 Tutorial Part VI: Persistence]()
+[The Java EE 6 Tutorial Part VI: Persistence](http://docs.oracle.com/javaee/6/tutorial/doc/bnbpy.html)
 
-[Querydsl Reference Manual]()
+[Querydsl Reference Manual](http://www.querydsl.com/static/querydsl/3.3.2/reference/html/)
 
-[Querydsl API]()
+[Querydsl API](http://www.querydsl.com/static/querydsl/3.3.2/apidocs/)
+
 
 ### 2.2. Blog Posts
 
-[Dynamic, typesafe queries in JPA 2.0]()
+[Dynamic, typesafe queries in JPA 2.0](http://www.ibm.com/developerworks/java/library/j-typesafejpa/)
 
-[JPA Criteria API by samples – Part-I]()
+[JPA Criteria API by samples – Part-I](http://www.altuure.com/2010/09/23/jpa-criteria-api-by-samples-part-i/)
 
-[JPA Criteria API by samples – Part-II]()
+[JPA Criteria API by samples – Part-II](https://web.archive.org/web/20170829042703/http://www.altuure.com:80/2010/09/23/jpa-criteria-api-by-samples-%E2%80%93-part-ii)
 
-[JPA 2 Criteria API Tutorial]()
+[JPA 2 Criteria API Tutorial](http://www.jumpingbean.co.za/blogs/jpa2-criteria-api)
 
-[JPA Pagination]()
+[JPA Pagination](http://www.baeldung.com/jpa-pagination)
 
 
 ### 2.3. Videos
 
-[JPA: Embedding Embeddables within Entities]()
+[JPA: Embedding Embeddables within Entities](http://www.youtube.com/watch?v=CV-qLwYKajI)
 
-[JPA: One to One Uni/Bi Directional Relationship Tutorial]()
+[JPA: One to One Uni/Bi Directional Relationship Tutorial](http://www.youtube.com/watch?v=QNYJBe2AZ-I)
 
-[JPA: One to Many Relationship]()
+[JPA: One to Many Relationship](http://www.youtube.com/watch?v=j1xxxrpbwME)
 
-[JPA: Mapping a Many To Many Relationship]()
+[JPA: Mapping a Many To Many Relationship](http://www.youtube.com/watch?v=BO-Gy4XC6QE)
 
-[JPA: Self Referencing Relationships]()
+[JPA: Self Referencing Relationships](http://www.youtube.com/watch?v=GV2tA3_uKBE)
 
-[JPA: Inheritance with @MappedSuperclass]()
+[JPA: Inheritance with @MappedSuperclass](http://www.youtube.com/watch?v=7kjiNuqsSq8)
 
-[Inheritance with @Inheritance]()
+[Inheritance with @Inheritance](http://www.youtube.com/watch?v=yvQrc2WigMc)
 
-[JPA: @Inheritance with Table Per Class]()
+[JPA: @Inheritance with Table Per Class](http://www.youtube.com/watch?v=fek69xLYJ3Y)
 
-[JPQL: The Basics of the Java Persistence Query Language]()
+[JPQL: The Basics of the Java Persistence Query Language](http://www.youtube.com/watch?v=KdJ4W7nqhVg)
 
-[JPA / JPQL: Intermediate Queries with @NamedQuery]()
+[JPA / JPQL: Intermediate Queries with @NamedQuery](http://www.youtube.com/watch?v=qlpeBFJWTys)
 
-[Criteria API Introduction]()
+[Criteria API Introduction](http://www.youtube.com/watch?v=J-f4jvljpgQ)
 
 
 ### 2.4. Spring Data JPA
 
-[Reference Manuals and Official Guides]()
+Reference Manuals and Official Guides
 
-[Spring Data JPA Reference Manual]()
+[Spring Data JPA Reference Manual](http://docs.spring.io/spring-data/jpa/docs/1.5.x/reference/html/)
 
-[Spring Data JPA API]()
+[Spring Data JPA API](http://docs.spring.io/spring-data/jpa/docs/1.5.x/api/)
 
-[Spring Data REST Reference Manual]()
+[Spring Data REST Reference Manual](http://docs.spring.io/spring-data/rest/docs/2.0.x/reference/html/)
 
-[Spring Data REST API]()
+[Spring Data REST API](http://docs.spring.io/spring-data/rest/docs/2.0.x/api/)
 
-[Getting started with Spring Data JPA]()
+[Getting started with Spring Data JPA](http://spring.io/blog/2011/02/10/getting-started-with-spring-data-jpa)
 
-[Advanced Spring Data JPA – Specifications and Querydsl]()
+[Advanced Spring Data JPA – Specifications and Querydsl](http://spring.io/blog/2011/04/26/advanced-spring-data-jpa-specifications-and-querydsl/)
 
-[Accessing Data with JPA]()
+[Accessing Data with JPA](http://spring.io/guides/gs/accessing-data-jpa/)
 
-[Accessing JPA Data with REST]()
+[Accessing JPA Data with REST](https://spring.io/guides/gs/accessing-data-rest/)
 
 
 ### 2.5. Blog Posts
