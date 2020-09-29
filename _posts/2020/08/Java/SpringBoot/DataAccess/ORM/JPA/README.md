@@ -1,285 +1,177 @@
-## JPA
+## Spring Data JPA Tutorial
 -----
 
+小白零基础学习Spring Data，没有一个系统的知识总结学起来很费劲。
 
-### 8.1.创建表
-
-@Entity注解声明一个类对应一个数据库实体
-
-@Table注解作用在类上，设置表名
-
-```java
-@Entity
-@Table(name = "t_role")
-public class Role {
-    @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private String description;
-}
+```html
+https://www.petrikainulainen.net/spring-data-jpa-tutorial/
 ```
 
-### 8.2.创建主键
+### 1. Introducing: Spring Data JPA Tutorial
 
-@Id注解用于声明一个字段为主键
+This tutorial describes how you can create JPA repositories without writing any boilerplate code, and it consists of the following blog posts
 
-使用@Id声明之后，我们还需要定义主键的生成策略。可以使用@GeneratedValue指定主键生成策略。
+[Spring Data JPA Tutorial: Introduction]()
+provides a quick introduction to Spring Data JPA. It describes what Spring Data JPA really is and provides an overview of the Spring Data repository interfaces.
 
-对于主键生成的方法在JPA中有两种,分别是
+[Spring Data JPA Tutorial: Getting the Required Dependencies]()
+describes how you can get the required dependencies.
 
-1. 通过@GeneratedValue直接使用JPA内置提供的四种主键生成策略
-1. 通过@GenericGenerator声明一个主键策略，然后@GeneratedValue使用这个策略
+[Spring Data JPA Tutorial: Configuration]() 
+helps you to configure the persistence layer of a Spring application that uses Spring Data JPA and Hibernate.
 
-#### 8.2.1.使用JPA内置的四种策略
-JPA使用枚举定义了4种常用的主键生成策略
+[Spring Data JPA Tutorial: CRUD]()
+describes how you can create a Spring Data JPA repository that provides CRUD operations for an entity.
 
-```java
-public enum GenerationType {
-    /*
-    使用一个特定的数据表格来保存主键
-    持久化引擎通过关系数据库的一张特定的表格来生成主键
-    */
-    TABLE,
-    /*
-    在某些数据库中不支持主键自增长，他们提供了另外一种叫SEQUENCE的主键生成机制。比如Oracle，PostgreSQL。
-    */
-    SEQUENCE,
-    /*
-    主键自增长
-    */
-    IDENTITY,
-    /*
-    把主键生成策略交给持久化引擎Persistence Engine
-    持久化引擎会根据数据库在以上三种主键生成策略中选择其中一种
-    */
-    AUTO
-}
-```
+[Spring Data JPA Tutorial: Introduction to Query Methods]()
+gives a very short introduction to query methods. It also describes what kind of values you can return from your query methods and how you can pass method parameters to your query methods.
 
-@GeneratedValue注解默认使用的策略时GenerationType.AUTO。
+[Spring Data JPA Tutorial: Creating Database Queries From Method Names]() 
+describes how you can create database queries from the method names of your query methods.
 
-如果后端数据库使用的时MySQL，则GenerationType.IDENTITY策略比较普通一点。
+[Spring Data JPA Tutorial: Creating Database Queries With the @Query Annotation]() 
+describes how you can create database queries by annotating your query methods with the @Query annotation.
 
-如果是分布式系统的话需要另外考虑使用分布式ID
+[Spring Data JPA Tutorial: Creating Database Queries With Named Queries]()
+describes how you can create database queries by using named queries.
 
-#### 8.2.2.使用自定义策略
+[Spring Data JPA Tutorial: Creating Database Queries With the JPA Criteria API]()
+describes how you can create dynamic queries by using the JPA Criteria API.
 
-除了上面使用JPA默认的4中策略以外，还可以使用@GenericGenerator注解声明一种主键策略，然后使用@GeneratedValue注解应用这个策略
+[Spring Data JPA Tutorial: Creating Database Queries With Querydsl]()
+describes how you can create dynamic database queries by using Querydsl.
 
-```java
-...
-@Id 
-@GenericGenerator(name = "identityIdGenerator",strategy = "identity")
-@GeneratedValue(generator = "identityIdGenerator")
-private Long id;
-...
-```
+[Spring Data JPA Tutorial: Sorting]() 
+describes how you can sort your query results.
 
-以上定义主键策略等同于使用默认的主键策略IDENTITY
+[Spring Data JPA Tutorial: Pagination]() 
+helps you to paginate your query results.
 
-```java
-...
-@Id 
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
-...
-```
+[Spring Data JPA Tutorial: Auditing, Part One]() 
+describes how you can add the creation and modification time fields into your entities by using the auditing infrastructure of Spring Data JPA.
 
-JPA额外提供的主键生成策略有如下几种：
-```java
-    //详见DefaultIdentifierGeneratorFactory类
-    public DefaultIdentifierGeneratorFactory() {
-        this.register("uuid2", UUIDGenerator.class);
-        this.register("guid", GUIDGenerator.class);
-        this.register("uuid", UUIDHexGenerator.class);
-        this.register("uuid.hex", UUIDHexGenerator.class);
-        this.register("assigned", Assigned.class);
-        this.register("identity", IdentityGenerator.class);
-        this.register("select", SelectGenerator.class);
-        this.register("sequence", SequenceStyleGenerator.class);
-        this.register("seqhilo", SequenceHiLoGenerator.class);
-        this.register("increment", IncrementGenerator.class);
-        this.register("foreign", ForeignGenerator.class);
-        this.register("sequence-identity", SequenceIdentityGenerator.class);
-        this.register("enhanced-sequence", SequenceStyleGenerator.class);
-        this.register("enhanced-table", TableGenerator.class);
-    }
-```
+[Spring Data JPA Tutorial: Auditing, Part Two]() 
+describes how you can add the information of the authenticated user, who created and/or updated an entity, into your entities by using the auditing infrastructure of Spring Data JPA.
 
-### 8.3.设置字段类型
+[Spring Data JPA Tutorial: Adding Custom Methods to a Single Repository]() 
+describes how you can add custom methods to a single repository.
 
-@Column注解用于声明字段
+[Spring Data JPA Tutorial: Adding Custom Methods to All Repositories]() 
+describes how you can add custom methods to all repositories.
 
-```java
-@Column(name= "user_name",nullable=false,length=32)
-private String userName;
-```
+[Spring Data JPA Tutorial: Integration Testing]() 
+describes how you can write integration tests for your Spring Data JPA repositories.
 
-设置字段并且加默认值（比较常用）
+### 2. Other Resources
+This section showcases useful material created by other developers. If you have written a blog post or recorded a video about Spring Data JPA, and want to include it to this section, ping me on Twitter and I will check it out. If I think that it is useful, I will add it to this section.
 
-```java
-Column(columnDefinition = "tinyint(1) default 1")
-private Boolean enabled;
-```
+### 2.1. Java Persistence API
 
-### 8.4.指定不持久化特定字段
+[Reference Manuals and Official Guides]()
 
-@Transient注解用于声明不需要与数据库映射的字段，在保存的时候不需要保存进数据库。
+[The Java EE 6 Tutorial Part VI: Persistence]()
 
-```java
-@Entity(name="USER")
-public class User {
-    ...
-    @Transient
-    private String secrect;
-}
-```
+[Querydsl Reference Manual]()
 
-除了使用@Transient声明以外，还可以采用下面几种方法
+[Querydsl API]()
 
-```java
-static String secrect;  //static修饰的变量不会持久化
-final String secrect = "111111";    //final修饰的变量不会持久化
-transient String secrect;   //transient修饰的变量不会持久化
-```
+### 2.2. Blog Posts
 
-### 8.5.声明大字段
+[Dynamic, typesafe queries in JPA 2.0]()
 
-@Lob注解用于声明某个字段为大字段
+[JPA Criteria API by samples – Part-I]()
+
+[JPA Criteria API by samples – Part-II]()
+
+[JPA 2 Criteria API Tutorial]()
+
+[JPA Pagination]()
 
 
-简化声明
+### 2.3. Videos
 
-```java
-@Lob
-private String content;
-```
+[JPA: Embedding Embeddables within Entities]()
 
-更详细的声明
+[JPA: One to One Uni/Bi Directional Relationship Tutorial]()
 
-```java
-@Lob        
-/*
-指定Lob类型数据库的获取策略
-FetchType.EAGER表示非延迟获取
-FetchType.LAZY表示延迟获取
-*/
-@Basic(fetch = FetchType.EAGER)
-/*
-定义字段的类型
-*/
-@Column(name = "content",columnDefinition = "LONGTEXT NOT NULL")
-private String content;
-```
+[JPA: One to Many Relationship]()
 
-### 8.6.创建枚举类型的字段
+[JPA: Mapping a Many To Many Relationship]()
 
-```java
-public enum Gender {
-    MALE("男性")，
-    FEMALE("女性");
-    
-    private String value;
-    Gender(String str){
-        value = str;    
-    }
-}
+[JPA: Self Referencing Relationships]()
 
-@Entity
-@Table(name = "role")
-public class Role{
-    @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+[JPA: Inheritance with @MappedSuperclass]()
 
-    private String name;
-    private String description;
+[Inheritance with @Inheritance]()
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender; 
-    ...
-}
-```
-数据库里面对应存储的是MALE/FEMALE
+[JPA: @Inheritance with Table Per Class]()
 
-### 8.7.增加审计功能
+[JPQL: The Basics of the Java Persistence Query Language]()
 
-只要继承了AbstractAuditBase的类都会默认加上下面四个字段
+[JPA / JPQL: Intermediate Queries with @NamedQuery]()
 
-```java
-@Data 
-@AllArgsConstructor
-@NoArgsConstructor
-@MappedSuperclas
-@EntityListeners(value = AuditingEntityListener.class)
-public abstract class AbstractAuditBase{
+[Criteria API Introduction]()
 
-    @CreatedDate
-    @Column(updateable = false)
-    @JsonIgnore
-    private Instant createdAt;
 
-    @LastModifiedDate
-    @JsonIgnore
-    private Instant updatedAt;
+### 2.4. Spring Data JPA
 
-    @CreatedBy
-    @Column(updateable=false)
-    @JsonIgnore
-    private String createdBy;
-    
-    @LastModifiedBy
-    @JsonIgnore
-    private String updatedBy;
-}
-```
+[Reference Manuals and Official Guides]()
 
-对应的审计功能对应的配置类可能是下面的
+[Spring Data JPA Reference Manual]()
 
-```java
-@Configuration
-@EnableJpaAuditing
-public class AuditSecurityConfiguration{
-    @Bean
-    AuditorAware<String> auditorAware() {
-        return () -> Optional.ofNullable(SecurityContextHolder.getContext())
-                            .map(SecurityContext::getAuthentication)
-                            .filter(Authentication::isAuthenticated)
-                            .map(Authentication::getName);
-    }   
-}
-```
+[Spring Data JPA API]()
 
-@CreatedDate注解表示改字段为创建时间字段。在这个实体被insert的时候，会设置此字段的值。
+[Spring Data REST Reference Manual]()
 
-@CreatedBy注解表示该字段为创建人，在执行insert操作的时候会创建字段。
+[Spring Data REST API]()
 
-@LastModifiedDate注解表示该字段为修改时间字段。
+[Getting started with Spring Data JPA]()
 
-@LastModifiedBy注解表示该字段更新人。
+[Advanced Spring Data JPA – Specifications and Querydsl]()
 
-@EnableJpaAuditing注解表是开启JPA的审计功能。
+[Accessing Data with JPA]()
 
-### 8.8.删除/修改数据
+[Accessing JPA Data with REST]()
 
-@Modifying注解提示JPA该操作是修改操作，修改操作还要配合@Transactional注解使用
 
-```java
-@Repository
-public interface UserRepository extends JpaRepository<User,Long> {
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
-    void deleteByUserName(String userName);
-}
-```
+### 2.5. Blog Posts
 
-### 8.9.关联关系
+[Distributed transactions with multiple databases, Spring Boot, Spring Data JPA and Atomikos]()
 
-@OneToOne注解表示一对一关系
+[Spring Data repositories with multiple databases]()
 
-@OneToMany注解表示一对多关系
+[The Persistence Layer with Spring Data JPA]()
 
-@ManyToOne注解表示多对一关系
+[Spring JPA Data + Hibernate + MySQL + MAVEN]()
 
-@ManyToMany注解表示多对多关系
+[Spring Data JPA with QueryDSL: Repositories made easy]()
+
+[Spring Data REST in Action]()
+
+[Spring MVC 3.2 with Spring Data REST (part 1)]()
+
+[Spring MVC 3.2 with Spring Data REST (part 2)]()
+
+[Spring boot and spring data jpa tutorial (part 1 / 2)]()
+
+[Spring boot and spring data jpa tutorial (part 2 / 2)]()
+
+### 2.6. Videos
+
+[An Introduction to Spring Data]()
+
+[Spring Data Repositories – A Deep Dive]()
+
+[An Introduction to Spring Data JPA]()
+
+[Spring Data JPA Configuration Tutorial]()
+
+[Configuring Spring Data with a MySQL Database]()
+
+[Spring Data JPA: Defining Query Methods on Repositories]()
+
+[Spring Data REST: Easily export JPA entities directly to the web]()
+
+[Spring Data Repositories – Best Practices]()
+
+[Integration Testing of Spring Data JPA Repositories]()
