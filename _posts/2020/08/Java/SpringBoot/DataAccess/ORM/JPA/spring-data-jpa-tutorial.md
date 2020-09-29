@@ -18,55 +18,55 @@ This tutorial describes how you can create JPA repositories without writing any 
 注：boilerplate code，泛指那些冗余但是又不得不写的代码。
 ```
 
-[Spring Data JPA Tutorial: Introduction]()
+[Spring Data JPA Tutorial: Introduction](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-introduction/)
 provides a quick introduction to Spring Data JPA. It describes what Spring Data JPA really is and provides an overview of the Spring Data repository interfaces.
 
-[Spring Data JPA Tutorial: Getting the Required Dependencies]()
+[Spring Data JPA Tutorial: Getting the Required Dependencies](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-getting-the-required-dependencies/)
 describes how you can get the required dependencies.
 
-[Spring Data JPA Tutorial: Configuration]() 
+[Spring Data JPA Tutorial: Configuration](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-one-configuration/) 
 helps you to configure the persistence layer of a Spring application that uses Spring Data JPA and Hibernate.
 
-[Spring Data JPA Tutorial: CRUD]()
+[Spring Data JPA Tutorial: CRUD](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-two-crud/)
 describes how you can create a Spring Data JPA repository that provides CRUD operations for an entity.
 
-[Spring Data JPA Tutorial: Introduction to Query Methods]()
+[Spring Data JPA Tutorial: Introduction to Query Methods](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-introduction-to-query-methods/)
 gives a very short introduction to query methods. It also describes what kind of values you can return from your query methods and how you can pass method parameters to your query methods.
 
-[Spring Data JPA Tutorial: Creating Database Queries From Method Names]() 
+[Spring Data JPA Tutorial: Creating Database Queries From Method Names](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-creating-database-queries-from-method-names/) 
 describes how you can create database queries from the method names of your query methods.
 
-[Spring Data JPA Tutorial: Creating Database Queries With the @Query Annotation]() 
+[Spring Data JPA Tutorial: Creating Database Queries With the @Query Annotation](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-creating-database-queries-with-the-query-annotation/) 
 describes how you can create database queries by annotating your query methods with the @Query annotation.
 
-[Spring Data JPA Tutorial: Creating Database Queries With Named Queries]()
+[Spring Data JPA Tutorial: Creating Database Queries With Named Queries](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-creating-database-queries-with-named-queries/)
 describes how you can create database queries by using named queries.
 
-[Spring Data JPA Tutorial: Creating Database Queries With the JPA Criteria API]()
+[Spring Data JPA Tutorial: Creating Database Queries With the JPA Criteria API](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-four-jpa-criteria-queries/)
 describes how you can create dynamic queries by using the JPA Criteria API.
 
-[Spring Data JPA Tutorial: Creating Database Queries With Querydsl]()
+[Spring Data JPA Tutorial: Creating Database Queries With Querydsl](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-five-querydsl/)
 describes how you can create dynamic database queries by using Querydsl.
 
-[Spring Data JPA Tutorial: Sorting]() 
+[Spring Data JPA Tutorial: Sorting](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-six-sorting/) 
 describes how you can sort your query results.
 
-[Spring Data JPA Tutorial: Pagination]() 
+[Spring Data JPA Tutorial: Pagination](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-seven-pagination/) 
 helps you to paginate your query results.
 
-[Spring Data JPA Tutorial: Auditing, Part One]() 
+[Spring Data JPA Tutorial: Auditing, Part One](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-auditing-part-one/) 
 describes how you can add the creation and modification time fields into your entities by using the auditing infrastructure of Spring Data JPA.
 
-[Spring Data JPA Tutorial: Auditing, Part Two]() 
+[Spring Data JPA Tutorial: Auditing, Part Two](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-auditing-part-two/) 
 describes how you can add the information of the authenticated user, who created and/or updated an entity, into your entities by using the auditing infrastructure of Spring Data JPA.
 
-[Spring Data JPA Tutorial: Adding Custom Methods to a Single Repository]() 
+[Spring Data JPA Tutorial: Adding Custom Methods to a Single Repository](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-eight-adding-functionality-to-a-repository/) 
 describes how you can add custom methods to a single repository.
 
-[Spring Data JPA Tutorial: Adding Custom Methods to All Repositories]() 
+[Spring Data JPA Tutorial: Adding Custom Methods to All Repositories](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-adding-custom-methods-into-all-repositories/) 
 describes how you can add custom methods to all repositories.
 
-[Spring Data JPA Tutorial: Integration Testing]() 
+[Spring Data JPA Tutorial: Integration Testing](https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-integration-testing/) 
 describes how you can write integration tests for your Spring Data JPA repositories.
 
 ### 2. Other Resources
