@@ -57,7 +57,9 @@ COPY --from=BUILD /usr/src/myapp/target/people-1.0-SNAPSHOT.war /opt/jboss/wildf
 ## 参考内容
 
 原文: Creating Smaller Java Image using Docker Multi-stage Build
+
 译者: Fundebug
+
 为了保证可读性，本文采用意译而非直译。
 
 Github仓库: arun-gupta/docker-java-multistage
@@ -65,5 +67,7 @@ Github仓库: arun-gupta/docker-java-multistage
 DockerCon 2017中与Java开发者直接相关的内容有:
 
 Docker多步构建(Docker Multi-stage build)
+
 Oracle JRE in Docker Store
+
 这篇博客介绍了为什么需要Docker多步构建(Docker Multi-stage build)，并且通过一个示例展示了如何构建更小的Java镜像。
