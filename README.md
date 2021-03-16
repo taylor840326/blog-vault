@@ -11,6 +11,10 @@
 
 [使用ProxySQL配合SQL关键字实现分库](_posts/2021/03/使用proxysql实现分库分表.md)
 
+[SparkStreaming整合Kafka10时遇到的问题](_posts/2021/03/spark_stream_with_kafka10.md)
+
+[SpringBoot使用actuator包导出prometheus格式的指标数据](_posts/2021/03/springboot_actuator_prometheus.md)
+
 
 ## 2020
 
