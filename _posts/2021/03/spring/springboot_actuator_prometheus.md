@@ -118,3 +118,9 @@ management:
     tags:
       application: ${spring.application.name}
 ```
+
+## 6. 如何定制prometheus指标
+
+```html
+https://www.cnblogs.com/cjsblog/p/11556029.html
+```
