@@ -119,7 +119,61 @@ management:
       application: ${spring.application.name}
 ```
 
-## 6. 如何定制prometheus指标
+## 6. 如何定制度量指标
+
+定制度量指标主要通过如下几个方式完成：
+
+1. 通过MeterRegister注册Meter
+1. 实现MeterBinder接口让SpringBoot自动绑定
+1. 通过MeterFilter进行定制
+
+实现
+
+以订单系统为例，假设每次查询一次订单信息就有一个计数器加一。
+
+service/OrderService.java
+
+```java
+@Service
+public class OrderService implement MeterBinder {
+  private Counter counter;
+
+  public void addCounter(){
+    counter.increment();
+  }
+
+  @Override
+  public void bindTo(MeterRegistry registry){
+    counter = registry.counter("order_counter","system","order");
+  }
+}
+```
+
+api/OrderAPI.java
+
+```java
+@RestController
+public class OrderAPI {
+  @Authwired
+  private OrderService orderService;
+
+  @GetMapping("/order")
+  public void getOrder(){
+    orderSerivce.addCounter();
+  }
+}
+```
+
+通过如下方式访问：
+
+```bash
+$ curl localhost:8899/actuator/prometheus
+可以找到名称是order_counter的指标项。值会随着每次访问而累加。
+```
+
+
+
+## 7. 参考资料
 
 ```html
 https://www.cnblogs.com/cjsblog/p/11556029.html
