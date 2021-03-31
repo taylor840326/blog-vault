@@ -1,5 +1,25 @@
-## 使用RestTemplate时的消息格式转换 
+## 使用HttpClient和RestTemplate访问Http资源
 -----
+
+## 1. 使用HttpClient
+
+```java
+		CloseableHttpClient client = HttpClientBuilder.create().build();
+		ArrayList<NameValuePair> params = new ArrayList<>();
+		params.add(new BasicNameValuePair("regionId","gz"));
+		params.add(new BasicNameValuePair("limit","10"));
+
+		URI uri = new URIBuilder().setScheme("https").setHost("open.didiyunapi.com")
+				.setPath("/dicloud/i/compute/dc2/list")
+				.setParameters(params)
+				.build();
+
+		HttpPost httpPost = new HttpPost(uri);
+		httpPost.setHeader("Authorization","Bearer xxxxxx");
+
+		CloseableHttpResponse resp = client.execute(httpPost);
+		System.out.println(EntityUtils.toString(resp.getEntity()));
+```
 
 ## 1. HttpMessageConverter
 
