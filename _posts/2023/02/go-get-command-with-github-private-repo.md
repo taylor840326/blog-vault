@@ -28,7 +28,9 @@ git config --global url."https://USERNAME:TOKEN@github.com/".insteadOf "https://
 
 ## 修改go env值
 
-设定私有仓库的信息。
+从Go 1.11开始所有依赖默认由mod管理， go命令会从goproxy.io上下载依赖包，并且会对下载的软件包和代码库进行安全校验。
+
+但，如果使用的是私有库，则就无法从goproxy.io上下载软件并且也无法进行校验。所以，使用私有仓库需要做如下设定。
 
 |需要|私有仓库信息| 作用范围| 说明|
 |:---|---|---|---:|
@@ -40,7 +42,7 @@ git config --global url."https://USERNAME:TOKEN@github.com/".insteadOf "https://
 export GOPRIVATE="github.com/taylor840326/xxx-xxx"
 ```
 
-设定好GOPRIVATE后GONOPROXY和GONOSUMDB也随着设定了。这表示配置在GOPRIVATE上的仓库不走代理和不保存本地SUMDB信息。
+设定好GOPRIVATE后GONOPROXY和GONOSUMDB也随着设定了。这表示配置在GOPRIVATE上的仓库不走代理和不进行信息的校验。
 
 ## 使用go get下载
 
@@ -79,10 +81,3 @@ $ go get golang.org/x/net@master
 ```bash
 $ go get golang.org/x/net@none
 ```
-
-
-
-
-
-
-
