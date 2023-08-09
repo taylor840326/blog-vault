@@ -1,7 +1,7 @@
 Ory Hydra 应用示例
 -----
 
-# 简介
+# 1. 简介
 
 最近从其他同事得知项目用到了OAuth2认证方式，使用的认证服务就是Hydra。出于对技术的提前积累特对该服务进行了简单的调研。
 
@@ -9,7 +9,7 @@ Ory Hydra是经过强化的、经过OpenID认证的OAuth2服务软件。其针�
 
 本文的目的是积累调研过程，防止后面重复踩坑。
 
-# 服务启动
+# 2. 服务启动
 
 为了方便的搭建起Hydra开发环境，可以使用docker-compose工具启动Hydra。
 
@@ -103,9 +103,9 @@ oidc:
 # docker-compose up -d
 ```
 
-# 令牌(token)颁发过程
+# 3. 令牌(token)颁发过程
 
-## 创建客户端
+## 3.1. 创建客户端
 
 请求地址
 
@@ -190,7 +190,7 @@ POST http://172.18.3.200:4445/admin/clients
 }
 ```
 
-## 请求授权
+## 3.2. 请求授权
 
 请求地址
 
@@ -213,7 +213,7 @@ GET http://172.18.3.200:4444/oauth2/auth?response_type=code&client_id=19d6a916-6
 
 跳转地址中最重要的就是login_challenge的值，该值需要传入到下一步骤用于登录验证。
 
-## 登录请求
+## 3.3. 登录请求
 
 上一步获取到登录的验证码login_challenge后，需要访问如下地址进行登录验证.
 
@@ -245,7 +245,7 @@ PUT http://172.18.3.200:4445/admin/oauth2/auth/requests/login/accept?login_chall
 
 这里最终要的值为consent_challenge，该值就是授权码。
 
-## 认证请求
+## 3.4. 认证请求
 
 上一步骤获取到授权码以后就可以发送认证请求。
 
@@ -271,7 +271,7 @@ http://172.18.3.200:4445/admin/oauth2/auth/requests/consent/accept?consent_chall
 
 截图中的code后面的值就是令牌访问码，需要用此码调用获取令牌接口获取到最终的令牌信息.
 
-## 获取令牌
+## 3.5. 获取令牌
 
 访问地址
 
@@ -308,7 +308,7 @@ http://172.18.3.200:4444/oauth2/token
 |token_type|String|令牌类型.|
 
 
-# 参考资料
+# 4. 参考资料
 
 【官网】
 ```html
