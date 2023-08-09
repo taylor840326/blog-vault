@@ -5,9 +5,9 @@ Ory Hydra 应用示例
 
 最近从其他同事得知项目用到了OAuth2认证方式，使用的认证服务就是Hydra。出于对技术的提前积累特对该服务进行了简单的调研。
 
-本文作为调研笔记用于自己学习只用。
-
 Ory Hydra是经过强化的、经过OpenID认证的OAuth2服务软件。其针对低延迟、高吞吐量和低资源消耗进行了优化。其不是身份提供者(也就是不提供用户注册、用户登录和密码重置等功能)，而是通过登录和同意应用程序连接到现有身份提供者。
+
+本文的目的是积累调研过程，防止后面重复踩坑。
 
 # 服务启动
 
@@ -21,8 +21,8 @@ services:
   hydra:
     image: oryd/hydra:v2.0.2
     ports:
-      - "4444:4444"   # Hydra对外服务端口
-      - "4445:4445"   # Hydra管理端口 
+      - "4444:4444"   # Hydra对外服务端口。
+      - "4445:4445"   # Hydra管理端口。所有访问地址是admin开头的使用该端口。
       - "5555:5555"   # Port for hydra token user
     command: serve -c /etc/config/hydra/hydra.yml all --dev
     volumes:
@@ -117,10 +117,10 @@ POST http://172.18.3.200:4445/admin/clients
 
 ```json
 {
-    "client_name": "crm",
-    "token_endpoint_auth_method": "client_secret_post",
+    "client_name": "crm",  //这里为应用程序起一个名字，该名称会在令牌中体现
+    "token_endpoint_auth_method": "client_secret_post", //注意有的实例中使用client_secret_basic，但是这种方式在2.0版本中已不被支持。
     "redirect_uris": [
-        "http://127.0.0.1:5555/callback"
+        "http://127.0.0.1:5555/callback"  //目标跳转地址。
     ],
     "scope": "openid offline",
     "grant_types": [
@@ -141,9 +141,9 @@ POST http://172.18.3.200:4445/admin/clients
 
 ```json
 {
-    "client_id": "19d6a916-6ac6-4f26-99ca-98534b075182",
+    "client_id": "19d6a916-6ac6-4f26-99ca-98534b075182", // 客户端id
     "client_name": "crm",
-    "client_secret": "Y00FMUQ6kZ-aLg.X0p.1oWEH4T",
+    "client_secret": "Y00FMUQ6kZ-aLg.X0p.1oWEH4T", //客户端密码
     "redirect_uris": [
         "http://127.0.0.1:5555/callback"
     ],
